@@ -528,6 +528,22 @@ export function getPlanTermLabel( planName, translate ) {
 	}
 }
 
+export function getPlanBillingTermLabel( planName, translate ) {
+	const plan = getPlan( planName );
+	if ( ! plan || ! plan.term ) {
+		return;
+	}
+
+	switch ( plan.term ) {
+		case TERM_MONTHLY:
+			return translate( 'monthly' );
+		case TERM_ANNUALLY:
+			return translate( 'yearly' );
+		case TERM_BIENNIALLY:
+			return translate( 'every two years' );
+	}
+}
+
 export const getPopularPlanSpec = ( { customerType, isJetpack, availablePlans } ) => {
 	// Jetpack doesn't currently highlight "Popular" plans
 	if ( isJetpack ) {

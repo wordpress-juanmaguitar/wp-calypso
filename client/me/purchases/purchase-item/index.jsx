@@ -12,7 +12,11 @@ import classNames from 'classnames';
  */
 import { CompactCard } from '@automattic/components';
 import {
+	creditCardExpiresBeforeSubscription,
+	creditCardHasAlreadyExpired,
 	getDisplayName,
+	getPartnerName,
+	getPurchaseBillingTermLabel,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
@@ -21,9 +25,6 @@ import {
 	isRecentMonthlyPurchase,
 	isRenewing,
 	purchaseType,
-	creditCardExpiresBeforeSubscription,
-	creditCardHasAlreadyExpired,
-	getPartnerName,
 } from 'calypso/lib/purchases';
 import { isDomainTransfer, isConciergeSession } from 'calypso/lib/products-values';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -131,8 +132,9 @@ class PurchaseItem extends Component {
 				);
 			}
 
-			return translate( 'Renews at %(amount)s on {{span}}%(date)s{{/span}}', {
+			return translate( 'Renews %(interval)s at %(amount)s on {{span}}%(date)s{{/span}}', {
 				args: {
+					interval: getPurchaseBillingTermLabel( purchase ),
 					amount: purchase.priceText,
 					date: renewDate.format( 'LL' ),
 				},
