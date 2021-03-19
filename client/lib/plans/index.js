@@ -528,10 +528,17 @@ export function getPlanTermLabel( planName, translate ) {
 	}
 }
 
+/**
+ * Returns the billing term label for a plan (i.e. "every month", "every year", "every two years").
+ *
+ * @param {string} planName Plan slug
+ * @param {Function} translate Translation function
+ * @returns {string|undefined} Translated billing term label
+ */
 export function getPlanBillingTermLabel( planName, translate ) {
 	const plan = getPlan( planName );
 	if ( ! plan || ! plan.term ) {
-		return;
+		return undefined;
 	}
 
 	switch ( plan.term ) {
@@ -542,6 +549,8 @@ export function getPlanBillingTermLabel( planName, translate ) {
 		case TERM_BIENNIALLY:
 			return translate( 'every two years' );
 	}
+
+	return undefined;
 }
 
 export const getPopularPlanSpec = ( { customerType, isJetpack, availablePlans } ) => {
