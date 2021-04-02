@@ -127,7 +127,7 @@ const exported = {
 		next();
 	},
 
-	following( context, next ) {
+	following( context, next, includeSeenPosts = true ) {
 		const basePath = sectionify( context.path );
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Following';
 		const mcKey = 'following';
@@ -172,6 +172,7 @@ const exported = {
 				mcKey
 			),
 			onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
+			includeSeenPosts,
 		} );
 		next();
 	},
@@ -349,3 +350,5 @@ export const {
 	readA8C,
 	readFollowingP2,
 } = exported;
+
+export const unreadFollowing = ( context, next ) => exported.following( context, next, false );

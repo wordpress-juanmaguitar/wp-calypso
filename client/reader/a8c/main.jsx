@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect, useDispatch } from 'react-redux';
 
@@ -20,7 +20,6 @@ import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 
 const A8CFollowing = ( props ) => {
-	const [ includeSeenPosts, setIncludeSeenPosts ] = useState( true );
 	const { translate, teams } = props;
 	const dispatch = useDispatch();
 
@@ -31,13 +30,8 @@ const A8CFollowing = ( props ) => {
 	};
 
 	return (
-		<Stream { ...props } shouldCombineCards={ false } includeSeenPosts={ includeSeenPosts }>
+		<Stream { ...props } shouldCombineCards={ false }>
 			<SectionHeader label={ translate( 'Followed A8C Sites' ) }>
-				{ isEligibleForUnseen( { teams } ) && (
-					<Button compact onClick={ () => setIncludeSeenPosts( ! includeSeenPosts ) }>
-						{ ! includeSeenPosts ? translate( 'Show all' ) : translate( 'Show unread only' ) }
-					</Button>
-				) }
 				{ isEligibleForUnseen( { teams } ) && (
 					<Button
 						compact

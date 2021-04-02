@@ -60,7 +60,7 @@ const FollowingStream = ( props ) => {
 	};
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<Stream { ...props }>
+		<Stream { ...props } includeSeenPosts={ false }>
 			<FollowingIntro />
 			<CompactCard className="following__search">
 				<SearchInput
