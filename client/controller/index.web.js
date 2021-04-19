@@ -62,7 +62,17 @@ export const ProviderWrappedLayout = ( {
 				currentQuery={ currentQuery }
 			>
 				<QueryClientProvider client={ queryClient }>
-					<ReactQueryDevtools initialIsOpen={ false } />
+					<ReactQueryDevtools
+						initialIsOpen={ false }
+						toggleButtonProps={ {
+							style: {
+								bottom: '24px',
+								right: '76px',
+								margin: '0',
+								left: 'none',
+							},
+						} }
+					/>
 					<ReduxProvider store={ store }>
 						<MomentProvider>{ layout }</MomentProvider>
 					</ReduxProvider>
