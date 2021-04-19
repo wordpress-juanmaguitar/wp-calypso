@@ -5,6 +5,7 @@ import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 /**
  * Internal Dependencies
@@ -61,6 +62,7 @@ export const ProviderWrappedLayout = ( {
 				currentQuery={ currentQuery }
 			>
 				<QueryClientProvider client={ queryClient }>
+					<ReactQueryDevtools initialIsOpen={ false } />
 					<ReduxProvider store={ store }>
 						<MomentProvider>{ layout }</MomentProvider>
 					</ReduxProvider>
