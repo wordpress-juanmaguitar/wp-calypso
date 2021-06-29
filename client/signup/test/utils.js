@@ -16,6 +16,7 @@ import {
 	getStepName,
 	getFlowName,
 	getFilteredSteps,
+	isPlanSelectionAvailableLaterInFlow,
 } from '../utils';
 import flows from 'calypso/signup/config/flows';
 
@@ -274,6 +275,41 @@ describe( 'utils', () => {
 			const canResume = canResumeFlow( 'onboarding', signupProgress );
 
 			expect( canResume ).toBe( false );
+		} );
+	} );
+
+	describe( 'isPlanSelectionAvailableLaterInFlow', () => {
+		const defaultFlowSteps = [ 'user', 'domains', 'plans' ];
+
+		test( 'should return true when given flow contains "plans" step', () => {
+			const isPlanStepSkipped = false;
+			const isPlanSelectionAvailable = isPlanSelectionAvailableLaterInFlow(
+				defaultFlowSteps,
+				isPlanStepSkipped
+			);
+
+			expect( isPlanSelectionAvailable ).toBe( true );
+		} );
+
+		test( 'should return false when given flow doesn`t contain "plans" step', () => {
+			const flowSteps = [ 'user', 'domains' ];
+			const isPlanStepSkipped = false;
+			const isPlanSelectionAvailable = isPlanSelectionAvailableLaterInFlow(
+				flowSteps,
+				isPlanStepSkipped
+			);
+
+			expect( isPlanSelectionAvailable ).toBe( false );
+		} );
+
+		test( 'should return false when "plans" step was skipped', () => {
+			const isPlanStepSkipped = true;
+			const isPlanSelectionAvailable = isPlanSelectionAvailableLaterInFlow(
+				defaultFlowSteps,
+				isPlanStepSkipped
+			);
+
+			expect( isPlanSelectionAvailable ).toBe( false );
 		} );
 	} );
 } );
