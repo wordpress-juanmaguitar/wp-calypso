@@ -57,6 +57,7 @@ export default function useOnSiteCreation(): void {
 		} ),
 		[ newSite, newUser, design ]
 	);
+)
 
 	React.useEffect( () => {
 		// isRedirecting check this is needed to make sure we don't overwrite the first window.location.replace() call
