@@ -830,10 +830,8 @@ export default connect(
 			selectedSite: getSelectedSite( state ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			sites: getSitesItems( state ),
-			isPlanSelectionAvailableLaterInFlow: isPlanSelectionAvailableLaterInFlow(
-				steps,
-				isPlanStepSkipped
-			),
+			isPlanSelectionAvailableLaterInFlow:
+				! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ),
 			userLoggedIn: isUserLoggedIn( state ),
 		};
 	},
