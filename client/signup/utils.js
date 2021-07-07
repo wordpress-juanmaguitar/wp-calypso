@@ -218,8 +218,13 @@ export const shouldForceLogin = ( flowName, userLoggedIn ) => {
 	return !! flow && flow.forceLogin;
 };
 
-// Derive if the "plans" step actually will be visible to the customer in a given flow after the domain step
-// i.e. Check "launch-site" flow while having a purchased paid plan
+/**
+ * Derive if the "plans" step actually will be visible to the customer in a given flow after the domain step
+ * i.e. Check "launch-site" flow while having a purchased paid plan
+ *
+ * @param  {object} flowSteps steps in the current flow
+ * @returns {boolean} true indicates that "plans" step will be one of the next steps in the flow
+ */
 export const isPlanSelectionAvailableLaterInFlow = ( flowSteps ) => {
 	/**
 	 * Caveat here even though "plans" step maybe available in a flow it might not be active
