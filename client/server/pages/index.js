@@ -13,7 +13,7 @@ import { stringify } from 'qs';
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
-import { getLanguage, filterLanguageRevisions } from 'calypso/lib/i18n-utils';
+import { filterLanguageRevisions } from 'calypso/lib/i18n-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -302,6 +302,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 				if ( data.localeSlug ) {
 					req.context.lang = data.localeSlug;
+					req.context.langVariant = data.localeVariant;
 					req.context.store.dispatch( {
 						type: LOCALE_SET,
 						localeSlug: data.localeSlug,
@@ -510,16 +511,9 @@ function handleLocaleSubdomains( req, res, next ) {
 		: null;
 
 	if ( langSlug && includes( config( 'magnificent_non_en_locales' ), langSlug ) ) {
-		// Retrieve the language object for the RTL information.
-		const language = getLanguage( langSlug );
-
 		// Switch locales only in a logged-out state.
-		if ( language && ! req.context.isLoggedIn ) {
-			req.context = {
-				...req.context,
-				lang: language.langSlug,
-				isRTL: !! language.rtl,
-			};
+		if ( ! req.context.isLoggedIn ) {
+			req.context.lang = langSlug;
 		} else {
 			// Strip the langSlug and redirect using hostname
 			// so that the user's locale preferences take priority.

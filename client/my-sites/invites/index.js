@@ -1,5 +1,5 @@
 import page from 'page';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import { makeLayout, render as clientRender, setLocaleMiddleware } from 'calypso/controller';
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import { acceptInvite, redirectWithoutLocaleifLoggedIn } from './controller';
 
@@ -13,6 +13,7 @@ export default () => {
 			`/accept-invite/:site_id/:invitation_key/:activation_key/:auth_key/${ locale }`,
 		],
 		redirectWithoutLocaleifLoggedIn,
+		setLocaleMiddleware( 'locale' ),
 		acceptInvite,
 		makeLayout,
 		clientRender

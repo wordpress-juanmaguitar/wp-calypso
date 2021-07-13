@@ -22,8 +22,6 @@ import {
 	getDocumentHeadLink,
 } from 'calypso/state/document-head/selectors';
 import initialReducer from 'calypso/state/reducer';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 import { serialize } from 'calypso/state/utils';
 
 const debug = debugFactory( 'calypso:server-render' );
@@ -148,7 +146,7 @@ const getLanguageManifest = ( langSlug ) => {
 };
 
 export function attachI18n( context ) {
-	let localeSlug = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
+	let localeSlug = context.langVariant || context.lang;
 	const shouldUseFallbackLocale =
 		context.user?.use_fallback_for_incomplete_languages && isTranslatedIncompletely( localeSlug );
 
@@ -187,12 +185,7 @@ export function attachI18n( context ) {
 		}
 	}
 
-	if ( context.store ) {
-		context.lang = getCurrentLocaleSlug( context.store.getState() ) || localeSlug;
-
-		const isLocaleRTL = isLocaleRtl( localeSlug );
-		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
-	}
+	context.isRTL = isLocaleRtl( localeSlug ) ?? false;
 }
 
 export function attachHead( context ) {
