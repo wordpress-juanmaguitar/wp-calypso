@@ -176,6 +176,11 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			featuredLabel={ featuredLabel }
 			hideSavingLabel={ hideSavingLabel }
 			scrollCardIntoView={ scrollCardIntoView }
+			onScreenIntersection={ ( intersectCount: number ) => {
+				if ( intersectCount === 1 ) {
+					console.log( 'first intersect from ' + item.productSlug );
+				}
+			} }
 		/>
 	);
 };

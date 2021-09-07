@@ -49,6 +49,7 @@ type OwnProps = {
 	featuredLabel?: TranslateResult;
 	hideSavingLabel?: boolean;
 	scrollCardIntoView?: ScrollCardIntoViewCallback;
+	onScreenIntersection: ( intersectionCount: number ) => void;
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
@@ -232,6 +233,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 	hideSavingLabel,
 	aboveButtonText = null,
 	scrollCardIntoView,
+	onScreenIntersection,
 }: Props ) => {
 	const translate = useTranslate();
 	const parsedHeadingLevel = Number.isFinite( headingLevel )
@@ -247,6 +249,41 @@ const JetpackProductCard: React.FC< Props > = ( {
 		}
 	}, [ originalPrice ] );
 
+	// Support events on intersection
+
+	const cardRef = useRef< HTMLDivElement >( null );
+	const observerRef = useRef< IntersectionObserver >();
+	const intersectCountRef = useRef( 0 );
+
+	useEffect( () => {
+		if ( ! cardRef.current ) {
+			return;
+		}
+
+		// If the observer is already defined, no need to continue
+		if ( observerRef.current ) {
+			return;
+		}
+
+		observerRef.current = new IntersectionObserver(
+			( entries ) => {
+				if ( entries.some( ( { isIntersecting } ) => isIntersecting ) ) {
+					intersectCountRef.current++;
+					onScreenIntersection( intersectCountRef.current );
+				}
+			},
+			{
+				threshold: 0.5,
+			}
+		);
+
+		observerRef.current.observe( cardRef.current );
+
+		// When the effect is dismounted, stop observing
+		return () => observerRef.current?.disconnect?.();
+		/* eslint-disable-next-line react-hooks/exhaustive-deps */
+	}, [] );
+
 	return (
 		<div
 			className={ classNames( 'jetpack-product-card', {
@@ -258,6 +295,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 				'without-icon': ! iconSlug,
 			} ) }
 			data-e2e-product-slug={ productSlug }
+			ref={ cardRef }
 		>
 			<div className="jetpack-product-card__scroll-anchor" ref={ anchorRef }></div>
 			{ isFeatured && (
