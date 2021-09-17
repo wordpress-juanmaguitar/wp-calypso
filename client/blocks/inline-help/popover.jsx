@@ -19,7 +19,7 @@ const noop = () => {};
 class InlineHelpPopover extends Component {
 	static propTypes = {
 		onClose: PropTypes.func.isRequired,
-		setDialogState: PropTypes.func.isRequired,
+		showVideoResult: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -141,7 +141,7 @@ class InlineHelpPopover extends Component {
 	};
 
 	renderSecondaryView = () => {
-		const { onClose, setDialogState } = this.props;
+		const { onClose, showVideoResult } = this.props;
 		const { searchQuery, selectedResult } = this.state;
 		const classes = classNames(
 			'inline-help__secondary-view',
@@ -162,7 +162,7 @@ class InlineHelpPopover extends Component {
 						),
 						[ VIEW_RICH_RESULT ]: (
 							<InlineHelpRichResult
-								setDialogState={ setDialogState }
+								showVideoResult={ showVideoResult }
 								closePopover={ onClose }
 								result={ selectedResult }
 								searchQuery={ searchQuery }
