@@ -76,6 +76,8 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 				name={ card.name }
 				expiry={ card.expiry }
 				isExpired={ card.is_expired }
+				postalCode={ card.meta[ 5 ].meta_value }
+				countryCode={ card.meta[ 0 ].meta_value }
 			/>
 			{ renderDeleteButton() }
 		</>
