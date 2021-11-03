@@ -1,18 +1,52 @@
 import { CheckoutProvider, Button } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { MiniCartLineItems } from './mini-cart-line-items';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
-import './mini-cart-style.scss';
+const MiniCartWrapper = styled.div`
+	box-sizing: border-box;
+	padding: 16px;
+	max-width: 480px;
+	text-align: left;
+	font-size: 1rem;
+`;
+
+const MiniCartHeader = styled.div`
+	border-bottom: 1px solid #ccc;
+	padding-bottom: 12px;
+	text-align: left;
+`;
+
+const MiniCartTitle = styled.h2`
+	font-weight: 600;
+`;
+
+const MiniCartSiteTitle = styled.span`
+	color: var( --color-neutral-50 );
+	font-size: 0.875rem;
+`;
+
+const MiniCartFooter = styled.div`
+	margin-top: 12px;
+`;
+
+const MiniCartTotalWrapper = styled.div`
+	font-weight: 600;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin-bottom: 4px;
+`;
 
 function MiniCartTotal( { responseCart }: { responseCart: ResponseCart } ) {
 	const translate = useTranslate();
 	return (
-		<div className="mini-cart__total">
+		<MiniCartTotalWrapper className="mini-cart__total">
 			<span>{ translate( 'Total' ) }</span>
 			<span>{ responseCart.total_cost_display }</span>
-		</div>
+		</MiniCartTotalWrapper>
 	);
 }
 
@@ -36,15 +70,15 @@ export function MiniCart( {
 
 	return (
 		<CheckoutProvider paymentMethods={ [] } paymentProcessors={ {} }>
-			<div className="mini-cart">
-				<div className="mini-cart__header">
-					<h2 className="mini-cart__title">{ translate( 'Cart' ) }</h2>
-					<span className="mini-cart__site-title">
+			<MiniCartWrapper className="mini-cart">
+				<MiniCartHeader className="mini-cart__header">
+					<MiniCartTitle className="mini-cart__title">{ translate( 'Cart' ) }</MiniCartTitle>
+					<MiniCartSiteTitle className="mini-cart__site-title">
 						{ translate( 'Site: %s', {
 							args: selectedSiteSlug,
 						} ) }
-					</span>
-				</div>
+					</MiniCartSiteTitle>
+				</MiniCartHeader>
 				<MiniCartLineItems
 					removeCoupon={ removeCoupon }
 					removeProductFromCart={ removeProductFromCart }
@@ -52,7 +86,7 @@ export function MiniCart( {
 					isPwpoUser={ isPwpoUser }
 				/>
 				<MiniCartTotal responseCart={ responseCart } />
-				<div className="mini-cart__footer">
+				<MiniCartFooter className="mini-cart__footer">
 					<Button
 						className="mini-cart__checkout"
 						buttonType={ 'primary' }
@@ -63,8 +97,8 @@ export function MiniCart( {
 					>
 						{ translate( 'Checkout' ) }
 					</Button>
-				</div>
-			</div>
+				</MiniCartFooter>
+			</MiniCartWrapper>
 		</CheckoutProvider>
 	);
 }
