@@ -1,7 +1,8 @@
 import { CheckoutProvider, Button } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { MiniCartLineItems } from './mini-cart-line-items';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
@@ -39,10 +40,10 @@ const MiniCartTotalWrapper = styled.div`
 `;
 
 function MiniCartTotal( { responseCart }: { responseCart: ResponseCart } ) {
-	const translate = useTranslate();
+	const { __ } = useI18n();
 	return (
 		<MiniCartTotalWrapper className="mini-cart__total">
-			<span>{ translate( 'Total' ) }</span>
+			<span>{ __( 'Total' ) }</span>
 			<span>{ responseCart.total_cost_display }</span>
 		</MiniCartTotalWrapper>
 	);
@@ -62,7 +63,7 @@ export function MiniCart( {
 		isLoading,
 		isPendingUpdate,
 	} = useShoppingCart( selectedSiteSlug );
-	const translate = useTranslate();
+	const { __ } = useI18n();
 	const isDisabled = isLoading || isPendingUpdate;
 	const isPwpoUser = false; // TODO: deal with this properly
 
@@ -70,11 +71,13 @@ export function MiniCart( {
 		<CheckoutProvider paymentMethods={ [] } paymentProcessors={ {} }>
 			<MiniCartWrapper className="mini-cart">
 				<MiniCartHeader className="mini-cart__header">
-					<MiniCartTitle className="mini-cart__title">{ translate( 'Cart' ) }</MiniCartTitle>
+					<MiniCartTitle className="mini-cart__title">{ __( 'Cart' ) }</MiniCartTitle>
 					<MiniCartSiteTitle className="mini-cart__site-title">
-						{ translate( 'Site: %s', {
-							args: selectedSiteSlug,
-						} ) }
+						{ sprintf(
+							/* translators: %s is the site slug */
+							__( 'Site: %s' ),
+							selectedSiteSlug
+						) }
 					</MiniCartSiteTitle>
 				</MiniCartHeader>
 				<MiniCartLineItems
@@ -93,7 +96,7 @@ export function MiniCart( {
 						isBusy={ isDisabled }
 						onClick={ () => goToCheckout( selectedSiteSlug ) }
 					>
-						{ translate( 'Checkout' ) }
+						{ __( 'Checkout' ) }
 					</Button>
 				</MiniCartFooter>
 			</MiniCartWrapper>
