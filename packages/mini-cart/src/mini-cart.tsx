@@ -14,8 +14,6 @@ const MiniCartWrapper = styled.div`
 `;
 
 const MiniCartHeader = styled.div`
-	border-bottom: 1px solid #ccc;
-	padding-bottom: 12px;
 	text-align: left;
 `;
 
