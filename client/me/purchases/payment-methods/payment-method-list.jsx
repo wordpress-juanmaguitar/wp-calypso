@@ -9,6 +9,7 @@ import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PaymentMethod from 'calypso/me/purchases/payment-methods/payment-method';
 import PaymentMethodDelete from 'calypso/me/purchases/payment-methods/payment-method-delete';
+import PaymentMethodEdit from 'calypso/me/purchases/payment-methods/payment-method-edit';
 import {
 	getAllStoredCards,
 	getUniquePaymentAgreements,
@@ -38,6 +39,7 @@ class PaymentMethodList extends Component {
 		return cards.map( ( card ) => {
 			return (
 				<PaymentMethod key={ card.stored_details_id }>
+					<PaymentMethodEdit card={ card } />
 					<PaymentMethodDelete card={ card } />
 				</PaymentMethod>
 			);
