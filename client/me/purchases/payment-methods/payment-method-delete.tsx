@@ -23,6 +23,7 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 	const isDeleting = useSelector( ( state ) =>
 		isDeletingStoredCard( state, card.stored_details_id )
 	);
+
 	const reduxDispatch = useDispatch< ReduxDispatch >();
 	const [ isDialogVisible, setIsDialogVisible ] = useState( false );
 	const closeDialog = useCallback( () => setIsDialogVisible( false ), [] );
