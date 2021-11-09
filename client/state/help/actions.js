@@ -5,9 +5,7 @@ import {
 	SUPPORT_LEVEL_SET,
 } from 'calypso/state/action-types';
 
-// Support History data needs to be disabled temporarily to avoid rate-limiting with our Zendesk API.
-// It is only used for non-essential read-only operations right now.
-// import 'calypso/state/data-layer/wpcom/help/support-history';
+import 'calypso/state/data-layer/wpcom/help/support-history';
 import 'calypso/state/help/init';
 
 export const selectSiteId = ( siteId ) => ( {
