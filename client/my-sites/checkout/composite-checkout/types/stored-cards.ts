@@ -13,6 +13,8 @@ export interface StoredCard {
 	stored_details_id: string;
 	user_id: string;
 	meta: StoredCardMeta[];
+	tax_postal_code: string;
+	tax_country_code: string;
 }
 
 export interface StoredCardMeta {
