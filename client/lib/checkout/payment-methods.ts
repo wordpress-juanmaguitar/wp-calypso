@@ -21,7 +21,7 @@ export interface PaymentMethod {
 	expiry: string;
 	stored_details_id: string;
 	is_expired?: boolean;
-	meta: any;
+	meta: { meta_key: string; meta_value: string }[];
 	tax_postal_code: string;
 	tax_country_code: string;
 }
@@ -60,15 +60,11 @@ export const getPaymentMethodSummary = ( {
 	type,
 	digits,
 	email,
-	tax_country_code,
-	tax_postal_code,
 }: {
 	translate: ReturnType< typeof useTranslate >;
 	type: string;
 	digits?: string;
 	email?: string;
-	tax_country_code?: string;
-	tax_postal_code?: string;
 } ): TranslateResult => {
 	if ( type === PARTNER_PAYPAL_EXPRESS ) {
 		return email || '';
@@ -113,6 +109,6 @@ export const getPaymentMethodSummary = ( {
 	}
 
 	return translate( '%(displayType)s ****%(digits)s', {
-		args: { displayType, digits, tax_country_code, tax_postal_code },
+		args: { displayType, digits },
 	} );
 };
