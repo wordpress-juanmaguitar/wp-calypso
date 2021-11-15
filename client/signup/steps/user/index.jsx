@@ -511,34 +511,24 @@ export class UserStep extends Component {
 		);
 	}
 
-	getSubHeaderText() {
-		if ( this.isSimplerMobileForm() ) {
-			if ( this.isEmailForm() ) {
-				return '';
-			}
-
-			const loginUrl = this.getLoginUrl( this.props );
-			return this.props.translate( 'Already have an account? {{a}}Log in{{/a}}', {
-				components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
-			} );
-		}
-
-		return this.state.subHeaderText;
-	}
-
 	render() {
 		if ( this.props.flowName === 'p2' ) {
 			return this.renderP2SignupStep();
 		}
 
 		if ( this.isSimplerMobileForm() ) {
+			const loginUrl = this.getLoginUrl( this.props );
+			const subHeading = this.props.translate( 'Already have an account? {{a}}Log in{{/a}}', {
+				components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+			} );
+
 			return (
 				<div className="user__simpler-mobile-form">
 					<StepWrapper
 						flowName={ this.props.flowName }
 						stepName={ this.props.stepName }
 						headerText={ this.getHeaderText() }
-						subHeaderText={ this.getSubHeaderText() }
+						subHeaderText={ subHeading }
 						positionInFlow={ this.props.positionInFlow }
 						fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
 						stepContent={ this.renderSignupForm() }
@@ -552,7 +542,7 @@ export class UserStep extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				headerText={ this.getHeaderText() }
-				subHeaderText={ this.getSubHeaderText() }
+				subHeaderText={ this.state.subHeaderText }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
 				stepContent={ this.renderSignupForm() }
