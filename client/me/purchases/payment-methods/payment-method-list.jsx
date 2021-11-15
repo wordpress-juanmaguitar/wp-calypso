@@ -39,7 +39,7 @@ class PaymentMethodList extends Component {
 		return cards.map( ( card ) => {
 			return (
 				<PaymentMethod key={ card.stored_details_id }>
-					<PaymentMethodEdit card={ card } />
+					<PaymentMethodEdit card={ card } list={ true } />
 					<PaymentMethodDelete card={ card } />
 				</PaymentMethod>
 			);
