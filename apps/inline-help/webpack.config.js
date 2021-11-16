@@ -6,6 +6,7 @@ const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
+const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 const webpack = require( 'webpack' );
@@ -88,6 +89,7 @@ module.exports = {
 		} ),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
 		new ExtensiveLodashReplacementPlugin(),
+		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
 				analyzerMode: 'server',
