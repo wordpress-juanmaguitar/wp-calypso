@@ -42,11 +42,11 @@ module.exports = {
 		rules: [
 			TranspileConfig.loader( {
 				exclude: /node_modules\//,
-				presets: [ require.resolve( '@automattic/calypso-build/babel/default' ) ],
+				presets: [ require.resolve( '@automattic/calypso-babel-config/presets/default' ) ],
 			} ),
 			TranspileConfig.loader( {
 				include: shouldTranspileDependency,
-				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
+				presets: [ require.resolve( '@automattic/calypso-babel-config/presets/dependencies' ) ],
 			} ),
 			SassConfig.loader( {
 				includePaths: [ __dirname ],
