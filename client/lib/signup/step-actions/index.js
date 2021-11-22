@@ -4,7 +4,7 @@ import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
-import { recordRegistration } from 'calypso/lib/analytics/signup';
+import { recordRegistration, recordSignupComplete } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
@@ -21,12 +21,17 @@ import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import flows from 'calypso/signup/config/flows';
 import steps from 'calypso/signup/config/steps';
-import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserName,
+	isUserLoggedIn,
+	getCurrentUserSiteCount,
+} from 'calypso/state/current-user/selectors';
 import {
 	getSelectedImportEngine,
 	getNuxUrlInputValue,
 } from 'calypso/state/importer-nux/temp-selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
@@ -257,7 +262,28 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	const state = reduxStore.getState();
 	const bearerToken = get( getSignupDependencyStore( state ), 'bearer_token', null );
 
+	const existingSiteCount = getCurrentUserSiteCount( state );
+	const isNewishUser = isUserRegistrationDaysWithinRange( state, null, 0, 7 );
+
 	const isManageSiteFlow = get( getSignupDependencyStore( state ), 'isManageSiteFlow', false );
+
+	const isNewUser = !! ( dependencies && dependencies.username );
+
+	const hasCartItems = !! (
+		dependencies &&
+		( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
+	);
+
+	const isNew7DUserSite = !! (
+		isNewUser ||
+		( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
+	);
+
+	const selectedDesign = get( dependencies, 'selectedDesign' );
+
+	const intent = get( dependencies, 'intent' );
+
+	const startingPoint = get( dependencies, 'startingPoint' );
 
 	if ( isManageSiteFlow ) {
 		const siteSlug = get( getSignupDependencyStore( state ), 'siteSlug', undefined );
@@ -300,7 +326,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			}
 
 			const parsedBlogURL = getUrlParts( response.blog_details.url );
-
 			const siteSlug = parsedBlogURL.hostname;
 			const siteId = response.blog_details.blogid;
 			const providedDependencies = {
@@ -318,6 +343,17 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				isFreeThemePreselected,
 				themeSlugWithRepo
 			);
+			recordSignupComplete( {
+				flow: flowToCheck,
+				siteId,
+				isNewUser,
+				hasCartItems,
+				isNew7DUserSite,
+				// Record the following values so that we can know the user completed which branch under the hero flow
+				theme: selectedDesign?.theme,
+				intent,
+				startingPoint,
+			} );
 		}
 	);
 }

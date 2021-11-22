@@ -28,7 +28,6 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import {
 	recordSignupStart,
-	recordSignupComplete,
 	recordSignupStep,
 	recordSignupInvalidStep,
 	recordSignupProcessingScreen,
@@ -455,18 +454,6 @@ class Signup extends Component {
 			startingPoint,
 		};
 		debug( 'Tracking signup completion.', debugProps );
-
-		recordSignupComplete( {
-			flow: this.props.flowName,
-			siteId,
-			isNewUser,
-			hasCartItems,
-			isNew7DUserSite,
-			// Record the following values so that we can know the user completed which branch under the hero flow
-			theme: selectedDesign?.theme,
-			intent,
-			startingPoint,
-		} );
 
 		this.handleLogin( dependencies, destination );
 	};
