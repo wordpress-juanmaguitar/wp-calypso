@@ -6,6 +6,7 @@ import {
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
+// import { getProductIntroductoryOffer } from 'calypso/state/products-list/selectors/get-product-introductory-offer';
 import { getProductPriceTierList } from 'calypso/state/products-list/selectors/get-product-price-tiers';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors/is-products-list-fetching';
 import {
@@ -14,6 +15,8 @@ import {
 } from 'calypso/state/sites/products/selectors';
 import type { SelectorProduct } from './types';
 import type { PriceTierEntry } from '@automattic/calypso-products';
+// import type { PriceTierEntry, IntroductoryOffer } from '@automattic/calypso-products';
+import { getJetpackSaleCouponDiscountRatio } from 'calypso/state/marketing/selectors';
 
 interface ItemPrices {
 	isFetching: boolean | null;
@@ -27,6 +30,8 @@ interface ItemRawPrices {
 	itemCost: number | null;
 	monthlyItemCost: number | null;
 	priceTierList: PriceTierEntry[];
+	// introductoryOffer: IntroductoryOffer | null;
+	introductoryOffer: null;
 }
 
 const useProductListItemPrices = (
@@ -42,12 +47,18 @@ const useProductListItemPrices = (
 	const priceTierList = useSelector( ( state ) =>
 		productSlug ? getProductPriceTierList( state, productSlug ) : []
 	);
+	const introductoryOffer = useSelector(
+		( state ) =>
+			// productSlug ? getProductIntroductoryOffer( state, productSlug ) : null
+			null
+	);
 
 	return {
 		isFetching,
 		itemCost,
 		monthlyItemCost,
 		priceTierList,
+		introductoryOffer,
 	};
 };
 
@@ -77,6 +88,7 @@ const useSiteAvailableProductPrices = (
 		itemCost,
 		monthlyItemCost,
 		priceTierList,
+		introductoryOffer: null,
 	};
 };
 
@@ -87,10 +99,12 @@ const useItemPrice = (
 ): ItemPrices => {
 	const listPrices = useProductListItemPrices( item, monthlyItemSlug );
 	const sitePrices = useSiteAvailableProductPrices( siteId, item, monthlyItemSlug );
+	// const jetpackSaleDiscountRatio = useSelector( getJetpackSaleCouponDiscountRatio );
 
 	const isFetching = siteId ? sitePrices.isFetching : listPrices.isFetching;
 	const itemCost = siteId ? sitePrices.itemCost : listPrices.itemCost;
 	const monthlyItemCost = siteId ? sitePrices.monthlyItemCost : listPrices.monthlyItemCost;
+	// const introductoryOffer = siteId ? null : listPrices.introductoryOffer;
 
 	const priceTierList = useMemo(
 		() => ( siteId ? sitePrices.priceTierList : listPrices.priceTierList ),
@@ -113,6 +127,9 @@ const useItemPrice = (
 			originalPrice = monthlyItemCost;
 			discountedPrice = itemCost / 12;
 		}
+		// if ( introductoryOffer ) {
+		// 	discountedPrice = introductoryOffer.;
+		// }
 	}
 
 	// Jetpack CRM price won't come from the API, so we need to hard-code it for now.

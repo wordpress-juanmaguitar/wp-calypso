@@ -120,3 +120,9 @@ export interface PlanMatchesQuery {
 	group?: string;
 	type?: string;
 }
+
+export interface IntroductoryOffer {
+	interval: 'year' | 'month' | 'week' | 'day';
+	intervalCount: number;
+	costPerInterval: number;
+}
