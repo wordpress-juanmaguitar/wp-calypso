@@ -5,6 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { getJetpackSaleCouponDiscountRatio } from 'calypso/state/marketing/selectors';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
 import { getProductIntroductoryOffer } from 'calypso/state/products-list/selectors/get-product-introductory-offer';
 import { getProductPriceTierList } from 'calypso/state/products-list/selectors/get-product-price-tiers';
@@ -15,7 +16,8 @@ import {
 } from 'calypso/state/sites/products/selectors';
 import type { SelectorProduct } from './types';
 import type { PriceTierEntry, IntroductoryOffer } from '@automattic/calypso-products';
-import { getJetpackSaleCouponDiscountRatio } from 'calypso/state/marketing/selectors';
+import config from '@automattic/calypso-config';
+import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 
 interface ItemPrices {
 	isFetching: boolean | null;
@@ -107,12 +109,24 @@ const useItemPrice = (
 ): ItemPrices => {
 	const listPrices = useProductListItemPrices( item, monthlyItemSlug );
 	const sitePrices = useSiteAvailableProductPrices( siteId, item, monthlyItemSlug );
-	// const jetpackSaleDiscountRatio = useSelector( getJetpackSaleCouponDiscountRatio );
+	const jetpackSaleDiscountRatio = useSelector( getJetpackSaleCouponDiscountRatio );
 
 	const isFetching = siteId ? sitePrices.isFetching : listPrices.isFetching;
 	const itemCost = siteId ? sitePrices.itemCost : listPrices.itemCost;
 	const monthlyItemCost = siteId ? sitePrices.monthlyItemCost : listPrices.monthlyItemCost;
 	const introductoryOffer = siteId ? null : listPrices.introductoryOffer;
+
+	const useCouponIntroductoryOffer = config.isEnabled( 'jetpack/intro-offer-coupon' );
+
+	// const DISCOUNT_PERCENTAGE =
+	// 	billingTerm === TERM_ANNUALLY && jetpackSaleDiscountRatio
+	// 		? 1 - jetpackSaleDiscountRatio
+	// 		: 1 - INTRO_PRICING_DISCOUNT_PERCENTAGE / 100;
+
+	// const couponOriginalPrice = parseFloat( ( discountedPrice ?? originalPrice ).toFixed( 2 ) );
+	// const couponDiscountedPrice = parseFloat(
+	// 	( ( discountedPrice ?? originalPrice ) * DISCOUNT_PERCENTAGE ).toFixed( 2 )
+	// );
 
 	const priceTierList = useMemo(
 		() => ( siteId ? sitePrices.priceTierList : listPrices.priceTierList ),
@@ -131,12 +145,18 @@ const useItemPrice = (
 	let discountedPrice = undefined;
 	if ( item && itemCost ) {
 		originalPrice = itemCost;
+		if ( useCouponIntroductoryOffer ) {
+			discountedPrice = itemCost * ( 1 - INTRO_PRICING_DISCOUNT_PERCENTAGE / 100 );
+		}
+		if ( jetpackSaleDiscountRatio ) {
+			discountedPrice = itemCost * ( 1 - jetpackSaleDiscountRatio );
+		}
 		if ( monthlyItemCost && item.term !== TERM_MONTHLY ) {
+			discountedPrice = originalPrice / 12;
 			originalPrice = monthlyItemCost;
-			discountedPrice = itemCost / 12;
 		}
 		if ( introductoryOffer ) {
-			discountedPrice = introOfferToMonthlyDiscount( introductoryOffer );
+			discountedPrice = introOfferToMonthlyDiscount( introductoryOffer ) ?? originalPrice;
 		}
 	}
 

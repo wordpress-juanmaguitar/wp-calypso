@@ -1,10 +1,7 @@
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
 import PlanPrice from 'calypso/my-sites/plan-price';
-import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import { getJetpackSaleCouponDiscountRatio } from 'calypso/state/marketing/selectors';
 import TimeFrame from './time-frame';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
 import type { Moment } from 'moment';
@@ -33,27 +30,19 @@ const Paid: React.FC< OwnProps > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const jetpackSaleDiscountRatio = useSelector( getJetpackSaleCouponDiscountRatio );
-	const DISCOUNT_PERCENTAGE =
-		billingTerm === TERM_ANNUALLY && jetpackSaleDiscountRatio
-			? 1 - jetpackSaleDiscountRatio
-			: 1 - INTRO_PRICING_DISCOUNT_PERCENTAGE / 100;
+	const discountPercentage = ( ( originalPrice - discountedPrice ) / originalPrice ) * 100;
 
-	const couponOriginalPrice = parseFloat( ( discountedPrice ?? originalPrice ).toFixed( 2 ) );
-	const couponDiscountedPrice = parseFloat(
-		( ( discountedPrice ?? originalPrice ) * DISCOUNT_PERCENTAGE ).toFixed( 2 )
-	);
 	const discountElt =
 		billingTerm === TERM_ANNUALLY
 			? translate( 'Save %(percent)d%% for the first year ✢', {
 					args: {
-						percent: ( ( originalPrice - couponDiscountedPrice ) / originalPrice ) * 100,
+						percent: discountPercentage,
 					},
 					comment: '✢ clause describing the displayed price adjustment',
 			  } )
 			: translate( 'You Save %(percent)d%% ✢', {
 					args: {
-						percent: INTRO_PRICING_DISCOUNT_PERCENTAGE,
+						percent: discountPercentage,
 					},
 					comment: '✢ clause describing the displayed price adjustment',
 			  } );
@@ -77,23 +66,25 @@ const Paid: React.FC< OwnProps > = ( {
 			 * what when seen in the dev docs page, but somehow it doesn't in
 			 * the pricing page.
 			 */ }
-			<span dir="ltr">
-				<PlanPrice
-					original
-					className="display-price__original-price"
-					rawPrice={
-						( billingTerm === TERM_ANNUALLY ? originalPrice : couponOriginalPrice ) as number
-					}
-					currencyCode={ currencyCode }
-				/>
-			</span>
+			{ discountedPrice && (
+				<span dir="ltr">
+					<PlanPrice
+						original
+						className="display-price__original-price"
+						rawPrice={ originalPrice }
+						currencyCode={ currencyCode }
+					/>
+				</span>
+			) }
+
 			<span dir="ltr">
 				<PlanPrice
 					discounted
-					rawPrice={ couponDiscountedPrice as number }
+					rawPrice={ discountedPrice ?? originalPrice }
 					currencyCode={ currencyCode }
 				/>
 			</span>
+
 			{ tooltipText && (
 				<InfoPopover position="top" className="display-price__price-tooltip">
 					{ tooltipText }
