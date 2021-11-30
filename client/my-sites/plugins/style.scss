@@ -16,7 +16,8 @@ body.is-section-plugins.theme-default.color-scheme {
 	--color-surface-backdrop: var( --studio-white );
 }
 
-.plugin__installed-on, .plugin-details__installed-on {
+.plugin__installed-on,
+.plugin-details__installed-on {
 	margin-bottom: 16px;
 }
 
@@ -142,14 +143,36 @@ $plugin-details-header-padding: 100px;
 	}
 }
 
-.plugin-details__top-section {
-	border-bottom: 1px solid var( --studio-gray-5 );
+%placeholder {
+	cursor: default;
+	color: transparent;
+	user-select: none;
+	background-color: var( --color-neutral-0 );
+	animation: loading-fade 1.6s ease-in-out infinite;
+}
 
+.plugin-details__top-section {
 	.plugin-details__layout-col-right.no-cta {
 		visibility: hidden;
 
 		@media screen and ( max-width: 1040px ) {
 			display: none;
+		}
+	}
+
+	&.is-placeholder {
+		.plugin-details__name,
+		.plugin-details__price,
+		.plugin-details__description,
+		.plugin-details__additional-info,
+		.plugin-details__install,
+		.plugin-details__t-and-c {
+			@extend %placeholder;
+		}
+
+		.plugin-details__tags {
+			@extend %placeholder;
+			width: 50%;
 		}
 	}
 }
@@ -163,7 +186,7 @@ $plugin-details-header-padding: 100px;
 .plugin-details__tags {
 	position: absolute;
 	font-size: $font-body-extra-small;
-	color: var( --studio-gray-40 );
+	color: var( --studio-gray-60 );
 	top: calc( $plugin-details-header-padding - 15px );
 	left: 0;
 
@@ -178,17 +201,18 @@ $plugin-details-header-padding: 100px;
 	justify-content: center;
 	padding: $plugin-details-header-padding 0;
 
-	.plugin-details__name, .plugin-details__price {
+	.plugin-details__name,
+	.plugin-details__price {
 		font-family: $brand-serif;
 		font-size: $font-title-large;
 		color: var( --studio-gray-100 );
-		padding: 16px 0;
+		margin: 16px 0;
 	}
 
 	.plugin-details__description {
 		font-size: $font-title-small;
 		color: var( --studio-gray-70 );
-		padding-bottom: 30px;
+		margin-bottom: 30px;
 	}
 
 	.plugin-details__additional-info {
@@ -206,17 +230,17 @@ $plugin-details-header-padding: 100px;
 		.plugin-details__info-title {
 			font-size: $font-body-extra-small;
 			font-weight: 400;
-			color: var( --studio-gray-40 );
+			color: var( --studio-gray-60 );
 		}
 
 		.plugin-details__info-value {
 			font-size: $font-body;
-			color: var( --studio-gray-70 );
+			color: var( --studio-gray-90 );
 		}
 	}
 
 	.plugin-details__install {
-		padding-bottom: 20px;
+		margin-bottom: 20px;
 
 		.plugin-details__install-button {
 			width: 100%;
@@ -225,7 +249,7 @@ $plugin-details-header-padding: 100px;
 			color: var( --studio-white );
 		}
 	}
-	
+
 	.plugin-details__t-and-c {
 		font-size: $font-body-extra-small;
 		color: var( --studio-gray-50 );
@@ -241,6 +265,8 @@ $plugin-details-header-padding: 100px;
 }
 
 .plugin-details__body {
+	border-top: 1px solid var( --studio-gray-5 );
+
 	.plugin-details__plugin-details-title {
 		padding: 15px 0;
 		display: none;
@@ -292,16 +318,16 @@ $plugin-details-header-padding: 100px;
 		margin-top: 100px;
 
 		.title {
-			color: var( --studio-gray-40 );
+			color: var( --studio-gray-60 );
 			font-size: $font-body-extra-small;
 		}
 
 		.value {
-			color: var( --studio-gray-70 );
+			color: var( --studio-gray-90 );
 			font-size: $font-body-small;
 			padding-bottom: 16px;
 
-			&.plugin-details__downloads-value {
+			&.plugin-details__active-installs-value {
 				font-size: $font-body;
 			}
 		}
@@ -319,11 +345,11 @@ $plugin-details-header-padding: 100px;
 		.plugin-details__plugin-details-title {
 			display: block;
 		}
-		
+
 		.plugin-details__layout-col-left {
 			order: 2;
 		}
-		
+
 		.plugin-details__layout-col-right {
 			order: 1;
 			margin-top: 0;
@@ -332,5 +358,40 @@ $plugin-details-header-padding: 100px;
 			flex-direction: column;
 			border-bottom: 1px solid var( --studio-gray-5 );
 		}
+	}
+}
+
+.plugin-details__sites-list-background + .plugin-details__body {
+	border-top: none;
+}
+
+.plugin-details__sites-list-background {
+	background-color: var( --studio-gray-0 );
+	padding-top: 20px;
+	padding-bottom: 60px;
+	position: relative;
+	transform: translateX( -50% );
+	left: 50%;
+	width: calc( 100vw - var( --sidebar-width-max ) + 1px );
+
+	@media screen and ( max-width: 782px ) {
+		width: 100vw;
+	}
+}
+
+.plugin-details__sites-list {
+	max-width: 1040px;
+	margin: auto;
+
+	@media screen and ( max-width: 1400px ) {
+		padding: 0 40px;
+	}
+
+	@media screen and ( max-width: 1040px ) {
+		padding: 0 48px;
+	}
+
+	@media screen and ( max-width: 660px ) {
+		padding: 0 24px;
 	}
 }

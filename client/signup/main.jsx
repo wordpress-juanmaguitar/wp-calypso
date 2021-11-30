@@ -31,6 +31,7 @@ import {
 	recordSignupComplete,
 	recordSignupStep,
 	recordSignupInvalidStep,
+	recordSignupProcessingScreen,
 } from 'calypso/lib/analytics/signup';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
@@ -84,6 +85,7 @@ import {
 	getFirstInvalidStep,
 	getStepUrl,
 	isReskinnedFlow,
+	isP2Flow,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import './style.scss';
@@ -111,10 +113,6 @@ function removeLoadingScreenClassNamesFromBody() {
 	}
 
 	document.body.classList.remove( 'has-loading-screen-signup' );
-}
-
-function isWPForTeamsFlow( flowName ) {
-	return flowName === 'p2';
 }
 
 function showProgressIndicator( flowName ) {
@@ -151,6 +149,7 @@ class Signup extends Component {
 		previousFlowName: null,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
 		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
@@ -205,6 +204,7 @@ class Signup extends Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { stepName, flowName, progress } = nextProps;
 
@@ -241,15 +241,18 @@ class Signup extends Component {
 		debug( 'Signup component mounted' );
 		this.startTrackingForBusinessSite();
 		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
-		recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
+		if ( ! this.state.shouldShowLoadingScreen ) {
+			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
+		}
 		this.preloadNextStep();
 		this.maybeShowSitePreview();
 	}
 
 	componentDidUpdate( prevProps ) {
 		if (
-			this.props.flowName !== prevProps.flowName ||
-			this.props.stepName !== prevProps.stepName
+			( this.props.flowName !== prevProps.flowName ||
+				this.props.stepName !== prevProps.stepName ) &&
+			! this.state.shouldShowLoadingScreen
 		) {
 			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
 		}
@@ -366,6 +369,12 @@ class Signup extends Component {
 		}
 
 		if ( startLoadingScreen ) {
+			recordSignupProcessingScreen(
+				this.props.flowName,
+				this.props.stepName,
+				this.getRecordProps()
+			);
+
 			this.setState( { shouldShowLoadingScreen: true } );
 			/* Temporary change to add a 10 second delay to the processing screen.
 			 * This is done to allow the user 10 seconds to answer the bizx survey
@@ -374,7 +383,7 @@ class Signup extends Component {
 				this.bizxSurveyTimerComplete = new Promise( ( resolve ) => setTimeout( resolve, 10000 ) );
 			}
 
-			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+			if ( isP2Flow( this.props.flowName ) ) {
 				addLoadingScreenClassNamesToBody();
 
 				// We have to add the P2 signup class name as well because it gets removed in the 'users' step.
@@ -385,7 +394,7 @@ class Signup extends Component {
 		if ( hasInvalidSteps ) {
 			this.setState( { shouldShowLoadingScreen: false } );
 
-			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+			if ( isP2Flow( this.props.flowName ) ) {
 				removeLoadingScreenClassNamesFromBody();
 			}
 		}
@@ -527,7 +536,10 @@ class Signup extends Component {
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToStep = ( stepName, stepSectionName, flowName = this.props.flowName ) => {
-		if ( ! this.isEveryStepSubmitted() ) {
+		// The `stepName` might be undefined after the user finish the last step but the value of
+		// `isEveryStepSubmitted` is still false. Thus, check the `stepName` here to avoid going
+		// to invalid step.
+		if ( stepName && ! this.isEveryStepSubmitted() ) {
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			page( getStepUrl( flowName, stepName, stepSectionName, locale ) );
 		} else if ( this.isEveryStepSubmitted() ) {
@@ -596,12 +608,12 @@ class Signup extends Component {
 	}
 
 	renderProcessingScreen( isReskinned ) {
-		if ( isWPForTeamsFlow( this.props.flowName ) ) {
+		if ( isP2Flow( this.props.flowName ) ) {
 			return <P2SignupProcessingScreen />;
 		}
 
 		if ( isReskinned ) {
-			const domainItem = get( this.props, 'signupDependencies.domainItem', false );
+			const domainItem = get( this.props, 'signupDependencies.domainItem', {} );
 			const hasPaidDomain = isDomainRegistration( domainItem );
 			const destination = this.signupFlowController.getDestination();
 
@@ -728,7 +740,7 @@ class Signup extends Component {
 		return (
 			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 				<DocumentHead title={ this.props.pageTitle } />
-				{ ! isWPForTeamsFlow( this.props.flowName ) && (
+				{ ! isP2Flow( this.props.flowName ) && (
 					<SignupHeader
 						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 						isReskinned={ isReskinned }

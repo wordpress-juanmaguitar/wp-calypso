@@ -130,6 +130,14 @@ export function domainManagementDnsAddRecord( siteName, domainName, relativeTo =
 	return domainManagementEditBase( siteName, domainName, 'add-dns-record', relativeTo );
 }
 
+export function domainManagementDnsEditRecord( siteName, domainName, recordId, relativeTo = null ) {
+	let path = domainManagementEditBase( siteName, domainName, 'edit-dns-record', relativeTo );
+	if ( recordId ) {
+		path += '?recordId=' + encodeURI( recordId );
+	}
+	return path;
+}
+
 export function domainManagementRedirectSettings( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'redirect-settings', relativeTo );
 }
@@ -264,4 +272,10 @@ export function getSectionName( pathname ) {
 
 export function domainManagementDomainConnectMapping( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'domain-connect-mapping', relativeTo );
+}
+
+export function createSiteFromDomainOnly( siteSlug, siteId ) {
+	return `/start/site-selected/?siteSlug=${ encodeURIComponent(
+		siteSlug
+	) }&siteId=${ encodeURIComponent( siteId ) }`;
 }

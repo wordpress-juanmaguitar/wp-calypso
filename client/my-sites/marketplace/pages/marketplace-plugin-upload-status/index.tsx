@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import EmptyContent from 'calypso/components/empty-content';
+import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -23,6 +24,8 @@ import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-p
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
 import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { initiateThemeTransfer as initiateTransfer } from 'calypso/state/themes/actions';
 import {
 	getSelectedSite,
@@ -64,12 +67,19 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 		getStatusForPlugin( state, siteId, productSlug )
 	);
 
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ?? null ) );
+	const isAtomic = useSelector( ( state ) =>
+		isSiteAutomatedTransfer( state, selectedSite?.ID ?? null )
+	);
+	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
+
 	const supportsAtomicUpgrade = useRef< boolean >();
 	useEffect( () => {
 		supportsAtomicUpgrade.current =
-			isBusiness( selectedSite?.plan ) ||
-			isEnterprise( selectedSite?.plan ) ||
-			isEcommerce( selectedSite?.plan );
+			selectedSite?.plan &&
+			( isBusiness( selectedSite.plan ) ||
+				isEnterprise( selectedSite.plan ) ||
+				isEcommerce( selectedSite.plan ) );
 	}, [ selectedSite ] );
 
 	// retrieve plugin data if not available
@@ -79,12 +89,15 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 		}
 	}, [ isWporgPluginFetched, productSlug ] );
 
-	// Check if the user plan is enough for installation
+	// Check if the user plan is enough for installation or it is a self-hosted jetpack site
 	// if not, check again in 2s and show an error message
 	useEffect( () => {
-		if ( ! supportsAtomicUpgrade.current ) {
+		if ( ! supportsAtomicUpgrade.current && ! isJetpackSelfHosted ) {
 			waitFor( 2 ).then(
-				() => ! supportsAtomicUpgrade.current && setNonInstallablePlanError( true )
+				() =>
+					! supportsAtomicUpgrade.current &&
+					! isJetpackSelfHosted &&
+					setNonInstallablePlanError( true )
 			);
 		}
 	} );
@@ -176,6 +189,7 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 			/>
 			{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 			<Masterbar>
+				<WordPressWordmark className="marketplace-plugin-upload-status__wpcom-wordmark" />
 				<Item>{ translate( 'Plugin Installation' ) }</Item>
 			</Masterbar>
 			<div className="marketplace-plugin-upload-status__root">

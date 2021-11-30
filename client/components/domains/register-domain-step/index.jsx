@@ -269,6 +269,7 @@ class RegisterDomainStep extends Component {
 		};
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// Reset state on site change
 		if (
@@ -308,7 +309,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	checkForBloggerPlan() {
-		const plan = get( this.props, 'selectedSite.plan', false );
+		const plan = get( this.props, 'selectedSite.plan', {} );
 		const products = get( this.props, 'cart.products', [] );
 		const isBloggerPlan = isBlogger( plan ) || products.some( isBlogger );
 

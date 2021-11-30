@@ -679,6 +679,10 @@ export function generateSteps( {
 			providesDependencies: [ 'siteSlug' ],
 		},
 
+		'p2-get-started': {
+			stepName: 'p2-get-started',
+		},
+
 		'plans-personal-monthly': {
 			stepName: 'plans-personal-monthly',
 			apiRequestFunction: addPlanToCart,
@@ -741,6 +745,7 @@ export function generateSteps( {
 			optionalDependencies: [ 'selectedDesign' ],
 			props: {
 				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
+				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
 			},
 		},
 		'difm-design-setup-site': {
@@ -755,6 +760,7 @@ export function generateSteps( {
 				hideExternalPreview: true,
 				useDIFMThemes: true,
 				showDesignPickerCategories: true,
+				showDesignPickerCategoriesAllFilter: false,
 			},
 		},
 		'difm-design': {
@@ -778,19 +784,38 @@ export function generateSteps( {
 		ready: {
 			stepName: 'ready',
 		},
+		importing: {
+			stepName: 'importing',
+		},
 
 		// Woocommerce Install steps
+		'select-site': {
+			stepName: 'select-site',
+			providesDependencies: [ 'siteId' ],
+			props: {
+				headerText: i18n.translate( 'Select a site' ),
+				subHeaderText: i18n.translate(
+					'Pick which site you would like to use to set up your new store.'
+				),
+			},
+		},
 		confirm: {
 			stepName: 'confirm',
+			props: {
+				headerTitle: i18n.translate( 'Your new store' ),
+				headerDescription: (
+					<>
+						{ i18n.translate( 'This will be your new store domain.' ) }
+						<br />
+						{ i18n.translate( 'You can change it later and get a custom one.' ) }
+					</>
+				),
+			},
+			dependencies: [ 'siteId' ],
 		},
 		transfer: {
 			stepName: 'transfer',
-		},
-		install: {
-			stepName: 'install',
-		},
-		complete: {
-			stepName: 'complete',
+			dependencies: [ 'siteId' ],
 		},
 	};
 }
