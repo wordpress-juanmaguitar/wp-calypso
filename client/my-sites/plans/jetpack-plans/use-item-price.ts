@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	TERM_MONTHLY,
 	PRODUCT_JETPACK_CRM,
@@ -5,6 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getJetpackSaleCouponDiscountRatio } from 'calypso/state/marketing/selectors';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
 import { getProductIntroductoryOffer } from 'calypso/state/products-list/selectors/get-product-introductory-offer';
@@ -16,8 +18,6 @@ import {
 } from 'calypso/state/sites/products/selectors';
 import type { SelectorProduct } from './types';
 import type { PriceTierEntry, IntroductoryOffer } from '@automattic/calypso-products';
-import config from '@automattic/calypso-config';
-import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 
 interface ItemPrices {
 	isFetching: boolean | null;
@@ -140,23 +140,27 @@ const useItemPrice = (
 			priceTierList: [],
 		};
 	}
-
+	console.log( item?.productSlug );
 	let originalPrice = 0;
 	let discountedPrice = undefined;
 	if ( item && itemCost ) {
 		originalPrice = itemCost;
 		if ( useCouponIntroductoryOffer ) {
 			discountedPrice = itemCost * ( 1 - INTRO_PRICING_DISCOUNT_PERCENTAGE / 100 );
+			console.log( `useCouponIntroductoryOffer - ${ discountedPrice }` );
 		}
 		if ( jetpackSaleDiscountRatio ) {
 			discountedPrice = itemCost * ( 1 - jetpackSaleDiscountRatio );
-		}
-		if ( monthlyItemCost && item.term !== TERM_MONTHLY ) {
-			discountedPrice = originalPrice / 12;
-			originalPrice = monthlyItemCost;
+			console.log( `jetpackSaleDiscountRatio - ${ discountedPrice }` );
 		}
 		if ( introductoryOffer ) {
 			discountedPrice = introOfferToMonthlyDiscount( introductoryOffer ) ?? originalPrice;
+			console.log( `introductoryOffer - ${ discountedPrice }` );
+		}
+		if ( monthlyItemCost && item.term !== TERM_MONTHLY ) {
+			discountedPrice = ( discountedPrice ?? originalPrice ) / 12;
+			console.log( `monthlyItemCost - ${ discountedPrice }` );
+			originalPrice = monthlyItemCost;
 		}
 	}
 

@@ -18,19 +18,22 @@ type OwnProps = {
 	hideSavingLabel?: boolean;
 };
 
-const Paid: React.FC< OwnProps > = ( {
+type SavingsLabelProps = {
+	billingTerm: Duration;
+	discountedPrice: number;
+	originalPrice: number;
+};
+
+const SavingsLabel: React.FC< SavingsLabelProps > = ( {
+	billingTerm,
 	discountedPrice,
 	originalPrice,
-	billingTerm,
-	currencyCode,
-	displayFrom,
-	tooltipText,
-	expiryDate,
-	hideSavingLabel,
 } ) => {
 	const translate = useTranslate();
 
-	const discountPercentage = ( ( originalPrice - discountedPrice ) / originalPrice ) * 100;
+	const discountPercentage = discountedPrice
+		? ( ( originalPrice - discountedPrice ) / originalPrice ) * 100
+		: null;
 
 	const discountElt =
 		billingTerm === TERM_ANNUALLY
@@ -47,6 +50,19 @@ const Paid: React.FC< OwnProps > = ( {
 					comment: '✢ clause describing the displayed price adjustment',
 			  } );
 
+	return <span className="display-price__you-save">{ discountElt }</span>;
+};
+
+const Paid: React.FC< OwnProps > = ( {
+	discountedPrice,
+	originalPrice,
+	billingTerm,
+	currencyCode,
+	displayFrom,
+	tooltipText,
+	expiryDate,
+	hideSavingLabel,
+} ) => {
 	const loading = ! currencyCode || ! originalPrice;
 	if ( loading ) {
 		return (
@@ -91,7 +107,13 @@ const Paid: React.FC< OwnProps > = ( {
 				</InfoPopover>
 			) }
 			<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
-			{ ! hideSavingLabel && <span className="display-price__you-save">{ discountElt }</span> }
+			{ ! hideSavingLabel && discountedPrice && (
+				<SavingsLabel
+					billingTerm={ billingTerm }
+					discountedPrice={ discountedPrice }
+					originalPrice={ originalPrice }
+				/>
+			) }
 		</>
 	);
 };
