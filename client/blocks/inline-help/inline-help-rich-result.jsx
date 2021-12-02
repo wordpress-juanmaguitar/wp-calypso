@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -22,7 +22,7 @@ class InlineHelpRichResult extends Component {
 		tour: PropTypes.string,
 	};
 
-	headerEl = React.createRef();
+	headerEl = createRef();
 
 	getButtonLabel( type = RESULT_ARTICLE ) {
 		const { translate } = this.props;
