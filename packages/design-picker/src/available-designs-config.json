@@ -1,6 +1,17 @@
 {
 	"featured": [
 		{
+			"title": "Blank Canvas",
+			"slug": "blank-canvas-2",
+			"template": "blank-canvas-2",
+			"theme": "blank-canvas-2",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"is_featured_picks": true,
+			"features": []
+		},
+		{
 			"title": "Arbutus",
 			"slug": "arbutus",
 			"template": "arbutus",
