@@ -6,7 +6,6 @@ import * as React from 'react';
  * Internal dependencies
  */
 import useFocusHandler from '../hooks/use-focus-handler';
-import useFocusTrap from '../hooks/use-focus-trap';
 import useKeydownHandler from '../hooks/use-keydown-handler';
 
 interface Props {
@@ -32,7 +31,6 @@ const KeyboardNavigation: React.FunctionComponent< Props > = ( {
 			onArrowRight: onNextStepProgression,
 			onArrowLeft: onPreviousStepProgression,
 		} );
-		useFocusTrap( tourContainerRef );
 
 		return null;
 	}

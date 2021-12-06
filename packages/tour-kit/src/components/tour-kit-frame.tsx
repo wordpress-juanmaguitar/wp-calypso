@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useConstrainedTabbing, useMergeRefs } from '@wordpress/compose';
 import { useEffect, useState, useCallback, useRef } from '@wordpress/element';
 import classnames from 'classnames';
 /**
@@ -22,6 +23,7 @@ const handleCallback = ( currentStepIndex: number, callback?: Callback ) => {
 };
 
 const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
+	const focusConstrainedRef = useConstrainedTabbing();
 	const tourContainerRef = useRef( null );
 	const popperElementRef = useRef( null );
 	const [ initialFocusedElement, setInitialFocusedElement ] = useState< HTMLElement | null >(
@@ -157,7 +159,10 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				tourContainerRef={ tourContainerRef }
 				isMinimized={ isMinimized }
 			/>
-			<div className={ classNames } ref={ tourContainerRef }>
+			<div
+				className={ classNames }
+				ref={ useMergeRefs( [ tourContainerRef, focusConstrainedRef ] ) }
+			>
 				{ showOverlay() && <Overlay visible={ true } /> }
 				{ showSpotlight() && <Spotlight referenceElement={ referenceElement } /> }
 				<div
