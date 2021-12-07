@@ -89,7 +89,6 @@
 		height: 16px;
 	}
 
-	&__you-save,
 	&__get-started {
 		display: inline-block;
 		margin-block-start: 24px;
@@ -108,10 +107,6 @@
 			calc( 100% - 10px ) 100%,
 			0 100%
 		);
-	}
-
-	&__you-save {
-		background-color: var( --studio-yellow-10 );
 	}
 
 	&__get-started {
@@ -191,5 +186,34 @@
 
 	&__expiration-date {
 		color: var( --studio-pink-50 );
+	}
+}
+
+.jetpack-product-card__heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+
+	margin: 0.75rem 0 1.25rem;
+}
+
+.jetpack-product-card__discount-label {
+	display: inline-block;
+
+	padding: 0.125rem 0.5rem;
+	margin: 0.5rem 0;
+
+	background-color: var( --studio-yellow-10 );
+	border-radius: 4px;
+
+	font-size: $font-body-small;
+	font-weight: 700;
+
+	sup {
+		position: relative;
+		top: -0.5em;
+
+		font-size: 0.75em;
 	}
 }
