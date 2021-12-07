@@ -80,14 +80,22 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	scrollCardIntoView,
 } ) => {
 	const billingTerm = item.displayTerm || item.term;
+	const isFree = item.isFree;
 
 	const translate = useTranslate();
 	const anchorRef = useRef< HTMLDivElement >( null );
 	const { discount } = useCouponDiscount( billingTerm, originalPrice, discountedPrice );
-
-	const discountElt =
+	const showDiscountLabel =
 		! hideSavingLabel &&
 		discount &&
+		! isFree &&
+		! isDisabled &&
+		! isOwned &&
+		! isDeprecated &&
+		! isIncludedInPlan;
+
+	const discountElt =
+		showDiscountLabel &&
 		translate( '%(percent)d%% off {{sup}}✢{{/sup}}', {
 			args: {
 				percent: discount,
@@ -146,7 +154,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 					isDeprecated={ isDeprecated }
 					isOwned={ isOwned }
 					isIncludedInPlan={ isIncludedInPlan }
-					isFree={ item.isFree }
+					isFree={ isFree }
 					discountedPrice={ discountedPrice }
 					currencyCode={ item.displayCurrency }
 					originalPrice={ originalPrice }
