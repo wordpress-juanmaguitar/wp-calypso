@@ -86,6 +86,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	const { discount } = useCouponDiscount( billingTerm, originalPrice, discountedPrice );
 
 	const discountElt =
+		! hideSavingLabel &&
 		discount &&
 		translate( '%(percent)d%% off {{sup}}✢{{/sup}}', {
 			args: {
@@ -128,7 +129,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 					<Header level={ headerLevel } className="jetpack-product-card__product-name">
 						{ item.displayName }
 					</Header>
-					{ ! hideSavingLabel && (
+					{ discountElt && (
 						<span className="jetpack-product-card__discount-label">{ discountElt }</span>
 					) }
 				</header>
