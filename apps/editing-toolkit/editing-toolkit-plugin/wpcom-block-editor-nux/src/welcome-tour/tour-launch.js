@@ -25,7 +25,6 @@ function LaunchWpcomWelcomeTour() {
 				select( 'automattic/starter-page-layouts' ) &&
 				select( 'automattic/starter-page-layouts' ).isOpen(),
 			isManuallyOpened: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideManuallyOpened(),
-			isWelcomeGuideEnabled: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideEnabled(),
 		} )
 	);
 	const localeSlug = useLocale();
@@ -33,7 +32,7 @@ function LaunchWpcomWelcomeTour() {
 	new window.Image().src = usePrefetchTourAssets( [ getTourSteps( localeSlug )[ 0 ] ] );
 
 	useEffect( () => {
-		if ( ( ! show && ! isNewPageLayoutModalOpen ) || ! isWelcomeGuideEnabled ) {
+		if ( ! show && ! isNewPageLayoutModalOpen ) {
 			return;
 		}
 
@@ -44,7 +43,7 @@ function LaunchWpcomWelcomeTour() {
 		} );
 	}, [ isNewPageLayoutModalOpen, isManuallyOpened, show, isWelcomeGuideEnabled ] );
 
-	if ( ( ! show && ! isNewPageLayoutModalOpen ) || ! isWelcomeGuideEnabled ) {
+	if ( ! show && ! isNewPageLayoutModalOpen ) {
 		return null;
 	}
 

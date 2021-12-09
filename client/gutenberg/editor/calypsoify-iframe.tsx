@@ -502,6 +502,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			const isAppBannerVisible = this.props.shouldDisplayAppBanner;
 			ports[ 0 ].postMessage( {
 				isAppBannerVisible,
+				hasAppBannerBeenDismissed: false,
 			} );
 
 			// If App Banner is not visible, we won't need to notify the Welcome Tour after its dismission
@@ -700,6 +701,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		if ( this.appBannerPort ) {
 			this.appBannerPort.postMessage( {
 				isAppBannerVisible: false,
+				hasAppBannerBeenDismissed: true,
 			} );
 
 			this.appBannerPort.close();

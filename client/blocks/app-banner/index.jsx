@@ -17,13 +17,12 @@ import {
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import shouldDisplayAppBanner from 'calypso/state/selectors/should-display-app-banner';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import shouldDisplayAppBanner from 'calypso/state/selectors/should-display-app-banner';
 import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-display-tos-update-banner';
 import { dismissAppBanner } from 'calypso/state/ui/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import {
-	EDITOR,
 	GUTENBERG,
 	NOTES,
 	READER,
@@ -130,20 +129,10 @@ export class AppBanner extends Component {
 		return null;
 	}
 
-	isDraftPostModalShowing() {
-		return typeof window !== 'undefined'
-			? window.sessionStorage.getItem( 'wpcom_signup_complete_show_draft_post_modal' )
-			: false;
-	}
-
 	render() {
 		const { translate, currentSection } = this.props;
 
 		if ( ! this.props.shouldDisplayAppBanner ) {
-			return null;
-		}
-
-		if ( this.isDraftPostModalShowing() ) {
 			return null;
 		}
 
