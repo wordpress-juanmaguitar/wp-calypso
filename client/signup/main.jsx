@@ -167,8 +167,12 @@ class Signup extends Component {
 			clearSignupDestinationCookie();
 		}
 
+		const isDIFMLiteFlow = 'do-it-for-me' === this.props.flowName;
+
 		// Prevent duplicate sites, check pau2Xa-1Io-p2#comment-6759.
-		if ( ! isAddNewSiteFlow && this.isReEnteringSignupViaBrowserBack() ) {
+		// The DIFM Lite flow deals with both new and existing sites, so
+		// we'll skip this.
+		if ( ! isAddNewSiteFlow && ! isDIFMLiteFlow && this.isReEnteringSignupViaBrowserBack() ) {
 			this.enableManageSiteFlow = true;
 			providedDependencies = { siteSlug: getSignupCompleteSlug(), isManageSiteFlow: true };
 		}
