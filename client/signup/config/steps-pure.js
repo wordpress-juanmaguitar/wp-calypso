@@ -38,6 +38,7 @@ export function generateSteps( {
 	isSiteTopicFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 	isNewOrExistingSiteFulfilled = noop,
+	setDesignIfNewSite = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -735,6 +736,7 @@ export function generateSteps( {
 		'new-or-existing-site': {
 			stepName: 'new-or-existing-site',
 			fulfilledStepCallback: isNewOrExistingSiteFulfilled,
+			providesDependencies: [ 'newOrExistingSiteChoice' ],
 		},
 
 		'difm-site-picker': {
@@ -748,9 +750,9 @@ export function generateSteps( {
 
 		'difm-design-setup-site': {
 			stepName: 'difm-design-setup-site',
-			apiRequestFunction: setDesignOnSite,
+			apiRequestFunction: setDesignIfNewSite,
 			delayApiRequestUntilComplete: true,
-			dependencies: [ 'siteSlug' ],
+			dependencies: [ 'siteSlug', 'newOrExistingSiteChoice' ],
 			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
 			optionalDependencies: [ 'selectedDesign' ],
 			props: {
@@ -768,9 +770,10 @@ export function generateSteps( {
 		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
-			dependencies: [ 'siteSlug', 'selectedDesign' ],
+			dependencies: [ 'siteSlug', 'selectedDesign', 'newOrExistingSiteChoice' ],
 			providesDependencies: [ 'cartItem', 'typeformResponseId' ],
 			apiRequestFunction: addPlanToCart,
+			delayApiRequestUntilComplete: true,
 		},
 
 		// ↓ importer steps
