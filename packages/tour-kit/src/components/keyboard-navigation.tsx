@@ -5,7 +5,6 @@ import * as React from 'react';
 /**
  * Internal dependencies
  */
-// import useFocusHandler from '../hooks/use-focus-handler';
 import useKeydownHandler from '../hooks/use-keydown-handler';
 
 interface Props {
