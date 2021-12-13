@@ -2,13 +2,14 @@
  * External Dependencies
  */
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { useConstrainedTabbing, useMergeRefs } from '@wordpress/compose';
-import { useEffect, useState, useCallback, useRef } from '@wordpress/element';
+import { useEffect, useState, useCallback, useRef, useMemo } from '@wordpress/element';
 import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
+import useFocusHandler from '../hooks/use-focus-handler';
 import usePopperHandler from '../hooks/use-popper-handler';
+import FocusConstrainedContainer from './focus-constrained-container';
 import KeyboardNavigation from './keyboard-navigation';
 import Overlay from './tour-kit-overlay';
 import Spotlight from './tour-kit-spotlight';
@@ -23,7 +24,6 @@ const handleCallback = ( currentStepIndex: number, callback?: Callback ) => {
 };
 
 const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
-	const focusConstrainedRef = useConstrainedTabbing();
 	const tourContainerRef = useRef( null );
 	const popperElementRef = useRef( null );
 	const [ initialFocusedElement, setInitialFocusedElement ] = useState< HTMLElement | null >(
@@ -149,19 +149,27 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 
 	const classNames = classnames( 'tour-kit-frame', config.options?.className );
 
+	const isTourFocused = useFocusHandler( tourContainerRef );
+
+	const isTourFocusConstrained = useMemo( () => {
+		return ! isMinimized && isTourFocused;
+	}, [ isMinimized, isTourFocused ] );
+
 	return (
 		<>
-			<KeyboardNavigation
-				onMinimize={ handleMinimize }
-				onDismiss={ handleDismiss }
-				onNextStepProgression={ handleNextStepProgression }
-				onPreviousStepProgression={ handlePreviousStepProgression }
-				tourContainerRef={ tourContainerRef }
-				isMinimized={ isMinimized }
-			/>
-			<div
+			{ isTourFocused && (
+				<KeyboardNavigation
+					onMinimize={ handleMinimize }
+					onDismiss={ handleDismiss }
+					onNextStepProgression={ handleNextStepProgression }
+					onPreviousStepProgression={ handlePreviousStepProgression }
+					isMinimized={ isMinimized }
+				/>
+			) }
+			<FocusConstrainedContainer
 				className={ classNames }
-				ref={ useMergeRefs( [ tourContainerRef, focusConstrainedRef ] ) }
+				ref={ tourContainerRef }
+				focusConstrained={ isTourFocusConstrained }
 			>
 				{ showOverlay() && <Overlay visible={ true } /> }
 				{ showSpotlight() && <Spotlight referenceElement={ referenceElement } /> }
@@ -197,7 +205,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 						</>
 					) }
 				</div>
-			</div>
+			</FocusConstrainedContainer>
 		</>
 	);
 };
