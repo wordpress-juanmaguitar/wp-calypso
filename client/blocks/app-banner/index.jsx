@@ -19,7 +19,6 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import shouldDisplayAppBanner from 'calypso/state/selectors/should-display-app-banner';
-import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-display-tos-update-banner';
 import { dismissAppBanner } from 'calypso/state/ui/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import {
@@ -221,7 +220,6 @@ const mapStateToProps = ( state ) => {
 		dismissedUntil: getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
 		currentSection: getCurrentSection( sectionName, isNotesOpen ),
 		currentRoute: getCurrentRoute( state ),
-		isTosBannerVisible: shouldDisplayTosUpdateBanner( state ),
 		shouldDisplayAppBanner: shouldDisplayAppBanner( state ),
 	};
 };
