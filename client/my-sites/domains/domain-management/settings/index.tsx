@@ -5,12 +5,15 @@ import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layo
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
+import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
 import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/transfer';
 import ContactsPrivacyCard from 'calypso/my-sites/domains/domain-management/contacts-privacy/contacts-card';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
+import { requestWhois } from 'calypso/state/domains/management/actions';
+import { getWhoisData } from 'calypso/state/domains/management/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import SettingsHeader from './settings-header';
@@ -57,6 +60,35 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 		</>
 	);
 
+	const getContactInformationAccordion = () => {
+		const { whoisData, domain } = props;
+		const { privateDomain } = domain;
+
+		const contactInformation = findRegistrantWhois( whoisData );
+
+		if ( ! contactInformation ) {
+			props.requestWhois( props.selectedDomainName );
+			return null;
+		}
+
+		const contactInfoFullName = `${ contactInformation.fname } ${ contactInformation.lname }`;
+		const privacyProtectionLabel = privateDomain
+			? translate( 'privacy protection on' )
+			: translate( 'privacy protection off' );
+
+		return (
+			<Accordion
+				title="Contact information"
+				subtitle={ `${ contactInfoFullName }, ${ privacyProtectionLabel }` }
+			>
+				<ContactsPrivacyCard
+					selectedSite={ props.selectedSite }
+					selectedDomainName={ props.selectedDomainName }
+				></ContactsPrivacyCard>
+			</Accordion>
+		);
+	};
+
 	return (
 		<Main wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
@@ -78,12 +110,7 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 							<Accordion title="Second element title" subtitle="Second element subtitle">
 								<div>Component placeholder: this one i'snt exapanded by default</div>
 							</Accordion>
-							<Accordion title="Second element title" subtitle="Second element subtitle">
-								<ContactsPrivacyCard
-									selectedSite={ props.selectedSite }
-									selectedDomainName={ props.selectedDomainName }
-								></ContactsPrivacyCard>
-							</Accordion>
+							{ getContactInformationAccordion() }
 						</div>
 					</>
 				}
@@ -96,9 +123,13 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 export default connect(
 	( state, ownProps: SettingsPagePassedProps ): SettingsPageConnectedProps => {
 		return {
+			whoisData: getWhoisData( state, ownProps.selectedDomainName ),
 			domain: getSelectedDomain( ownProps )!,
 			currentRoute: getCurrentRoute( state ),
 			hasDomainOnlySite: Boolean( isDomainOnlySite( state, ownProps.selectedSite!.ID ) ),
 		};
+	},
+	{
+		requestWhois,
 	}
 )( Settings );

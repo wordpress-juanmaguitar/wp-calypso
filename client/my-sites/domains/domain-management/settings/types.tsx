@@ -31,13 +31,17 @@ export type SettingsPageConnectedProps = {
 	domain: ResponseDomain;
 	currentRoute: string;
 	hasDomainOnlySite: boolean;
-
 	whoisData: WhoisData[];
+};
 
+export type SettingsPageConnectedDispatchProps = {
 	requestWhois: ( domain: string ) => void;
 };
 
 export type SettingsHeaderProps = {
 	domain: ResponseDomain;
 };
-export type SettingsPageProps = SettingsPagePassedProps & SettingsPageConnectedProps;
+
+export type SettingsPageProps = SettingsPagePassedProps &
+	SettingsPageConnectedProps &
+	SettingsPageConnectedDispatchProps;
