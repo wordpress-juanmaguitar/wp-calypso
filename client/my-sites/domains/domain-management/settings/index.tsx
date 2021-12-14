@@ -9,6 +9,7 @@ import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/b
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
 import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/transfer';
+import ContactsPrivacyCard from 'calypso/my-sites/domains/domain-management/contacts-privacy/contacts-card';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -76,6 +77,12 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 							</Accordion>
 							<Accordion title="Second element title" subtitle="Second element subtitle">
 								<div>Component placeholder: this one i'snt exapanded by default</div>
+							</Accordion>
+							<Accordion title="Second element title" subtitle="Second element subtitle">
+								<ContactsPrivacyCard
+									selectedSite={ props.selectedSite }
+									selectedDomainName={ props.selectedDomainName }
+								></ContactsPrivacyCard>
 							</Accordion>
 						</div>
 					</>
