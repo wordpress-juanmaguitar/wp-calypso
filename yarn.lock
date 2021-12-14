@@ -11347,7 +11347,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"body-parser@npm:1.19.0, body-parser@npm:^1.19.0":
+"body-parser@npm:1.19.0":
   version: 1.19.0
   resolution: "body-parser@npm:1.19.0"
   dependencies:
@@ -11362,6 +11362,24 @@ __metadata:
     raw-body: 2.4.0
     type-is: ~1.6.17
   checksum: df97c94a16495db166dba4c7812a43ba800ea252a76a1de80be944e2b884b808897febb920880c30089ac01f74f9118ca589402294c0ea5e2075488e4f91dc09
+  languageName: node
+  linkType: hard
+
+"body-parser@npm:^1.19.1":
+  version: 1.19.1
+  resolution: "body-parser@npm:1.19.1"
+  dependencies:
+    bytes: 3.1.1
+    content-type: ~1.0.4
+    debug: 2.6.9
+    depd: ~1.1.2
+    http-errors: 1.8.1
+    iconv-lite: 0.4.24
+    on-finished: ~2.3.0
+    qs: 6.9.6
+    raw-body: 2.4.2
+    type-is: ~1.6.18
+  checksum: 29d3b3e2b0e39f9cf2b92ae7d3da3cb64d609222ae1a1ca878aa82371f968c62f26e406e3be87e34e7d179df0748c6a4c989ced2192b4620ee3777474402d6f5
   languageName: node
   linkType: hard
 
@@ -11874,6 +11892,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bytes@npm:3.1.1":
+  version: 3.1.1
+  resolution: "bytes@npm:3.1.1"
+  checksum: 286a6280730ce90409a89acc0052bcb39e7fb28eb7c019bede36af22cce2c93993f17fd2d66839d7f8e142c2156505989b2c09499a7dbed461c918c782caca80
+  languageName: node
+  linkType: hard
+
 "cacache@npm:^12.0.2":
   version: 12.0.3
   resolution: "cacache@npm:12.0.3"
@@ -12144,7 +12169,7 @@ __metadata:
     "@wordpress/warning": ^2.2.2
     autoprefixer: ^10.2.5
     autosize: ^4.0.4
-    body-parser: ^1.19.0
+    body-parser: ^1.19.1
     browser-filesaver: ^1.1.1
     browserslist-useragent: ^3.0.3
     bunyan: ^1.8.15
@@ -20106,6 +20131,19 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"http-errors@npm:1.8.1":
+  version: 1.8.1
+  resolution: "http-errors@npm:1.8.1"
+  dependencies:
+    depd: ~1.1.2
+    inherits: 2.0.4
+    setprototypeof: 1.2.0
+    statuses: ">= 1.5.0 < 2"
+    toidentifier: 1.0.1
+  checksum: f01aeecd76260a6fe7f08e192fcbe9b2f39ed20fc717b852669a69930167053b01790998275c6297d44f435cf0e30edd50c05223d1bec9bc484e6cf35b2d6f43
+  languageName: node
+  linkType: hard
+
 "http-errors@npm:~1.6.2":
   version: 1.6.3
   resolution: "http-errors@npm:1.6.3"
@@ -20561,7 +20599,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"inherits@npm:2, inherits@npm:^2.0.0, inherits@npm:^2.0.1, inherits@npm:^2.0.3, inherits@npm:^2.0.4, inherits@npm:~2.0.1, inherits@npm:~2.0.3":
+"inherits@npm:2, inherits@npm:2.0.4, inherits@npm:^2.0.0, inherits@npm:^2.0.1, inherits@npm:^2.0.3, inherits@npm:^2.0.4, inherits@npm:~2.0.1, inherits@npm:~2.0.3":
   version: 2.0.4
   resolution: "inherits@npm:2.0.4"
   checksum: 4e531f648b29039fb7426fb94075e6545faa1eb9fe83c29f0b6d9e7263aceb4289d2d4557db0d428188eeb449cc7c5e77b0a0b2c4e248ff2a65933a0dee49ef2
@@ -29598,6 +29636,13 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"qs@npm:6.9.6":
+  version: 6.9.6
+  resolution: "qs@npm:6.9.6"
+  checksum: b635a0f35b53c8d19f41f5be01b1be24909b99a74be4eaa076814cf3707e49fbcb0c7eb3c5d4396c10eb0073888e76761e4efe8a2f65a60fb28b0b3397740a83
+  languageName: node
+  linkType: hard
+
 "qs@npm:^6.1.0, qs@npm:^6.10.0, qs@npm:^6.4.0, qs@npm:^6.5.1, qs@npm:^6.5.2, qs@npm:^6.9.1, qs@npm:^6.9.4, qs@npm:^6.9.6":
   version: 6.10.1
   resolution: "qs@npm:6.10.1"
@@ -29731,6 +29776,18 @@ fsevents@~2.1.2:
     iconv-lite: 0.4.24
     unpipe: 1.0.0
   checksum: c7ff86d9d4a91f0d9ab3e2eb45b2197d2534e0f24fded16989085fe71207539f63100a6fd49507a5ff1907ff38511e510a3e6098102b9e8711cd84d7344a703a
+  languageName: node
+  linkType: hard
+
+"raw-body@npm:2.4.2":
+  version: 2.4.2
+  resolution: "raw-body@npm:2.4.2"
+  dependencies:
+    bytes: 3.1.1
+    http-errors: 1.8.1
+    iconv-lite: 0.4.24
+    unpipe: 1.0.0
+  checksum: 50596d32fc57f4da839c9f938f84debddcfe09caffc5005a60cccc1c0aebb2c7d714fc1513252f9da6900aebf00a12062f959050aefe9767144b6df7f9f125d5
   languageName: node
   linkType: hard
 
@@ -33068,6 +33125,13 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"setprototypeof@npm:1.2.0":
+  version: 1.2.0
+  resolution: "setprototypeof@npm:1.2.0"
+  checksum: 68733173026766fa0d9ecaeb07f0483f4c2dc70ca376b3b7c40b7cda909f94b0918f6c5ad5ce27a9160bdfb475efaa9d5e705a11d8eaae18f9835d20976028bc
+  languageName: node
+  linkType: hard
+
 "sha.js@npm:^2.4.0, sha.js@npm:^2.4.8":
   version: 2.4.11
   resolution: "sha.js@npm:2.4.11"
@@ -35571,6 +35635,13 @@ testarmada-magellan@11.0.10:
   version: 1.0.0
   resolution: "toidentifier@npm:1.0.0"
   checksum: 27a37b8b21126e7216d40c02f410065b1de35b0f844368d0ccaabba7987595703006d45e5c094b086220cbbc5864d4b99766b460110e4bc15b9db574c5c58be2
+  languageName: node
+  linkType: hard
+
+"toidentifier@npm:1.0.1":
+  version: 1.0.1
+  resolution: "toidentifier@npm:1.0.1"
+  checksum: 93937279934bd66cc3270016dd8d0afec14fb7c94a05c72dc57321f8bd1fa97e5bea6d1f7c89e728d077ca31ea125b78320a616a6c6cd0e6b9cb94cb864381c1
   languageName: node
   linkType: hard
 
