@@ -12,6 +12,7 @@ import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/c
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import SetAsPrimary from './set-as-primary';
 import SettingsHeader from './settings-header';
 import type {
 	SettingsPageConnectedProps,
@@ -55,33 +56,33 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 			<DomainDeleteInfoCard selectedSite={ props.selectedSite } domain={ props.domain } />
 		</>
 	);
+	const renderContent = () => {
+		return (
+			<>
+				{ /* Placeholder to test accordion */ }
+				<div style={ { marginTop: '30px' } }>
+					<Accordion
+						title="First element title"
+						subtitle="First element subtitle"
+						expanded={ true }
+					>
+						<div>Component placeholder: this one is exapanded by default</div>
+					</Accordion>
+					<Accordion title="Second element title" subtitle="Second element subtitle">
+						<div>Component placeholder: this one i'snt exapanded by default</div>
+					</Accordion>
+					<SetAsPrimary domain={ props.domain } selectedSite={ props.selectedSite } />
+				</div>
+			</>
+		);
+	};
 
 	return (
 		<Main wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
 			<SettingsHeader domain={ props.domain } />
-			<TwoColumnsLayout
-				content={
-					<>
-						Page goes here.
-						{ /* Placeholder to test accordion */ }
-						<div style={ { marginTop: '30px' } }>
-							<Accordion
-								title="First element title"
-								subtitle="First element subtitle"
-								expanded={ true }
-							>
-								<div>Component placeholder: this one is exapanded by default</div>
-							</Accordion>
-							<Accordion title="Second element title" subtitle="Second element subtitle">
-								<div>Component placeholder: this one i'snt exapanded by default</div>
-							</Accordion>
-						</div>
-					</>
-				}
-				sidebar={ renderSettingsCards() }
-			/>
+			<TwoColumnsLayout content={ renderContent() } sidebar={ renderSettingsCards() } />
 		</Main>
 	);
 };
