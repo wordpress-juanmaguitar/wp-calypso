@@ -62,13 +62,23 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 
 	const getContactInformationAccordion = () => {
 		const { whoisData, domain } = props;
-		const { privateDomain } = domain;
 
+		const placeholderAccordion = (
+			<Accordion
+				title="Contact information"
+				subtitle="Contact information"
+				isPlaceholder
+			></Accordion>
+		);
+
+		if ( ! domain ) return placeholderAccordion;
+
+		const { privateDomain } = domain;
 		const contactInformation = findRegistrantWhois( whoisData );
 
 		if ( ! contactInformation ) {
 			props.requestWhois( props.selectedDomainName );
-			return null;
+			return placeholderAccordion;
 		}
 
 		const contactInfoFullName = `${ contactInformation.fname } ${ contactInformation.lname }`;
