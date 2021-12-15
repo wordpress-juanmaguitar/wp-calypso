@@ -4,6 +4,7 @@ import Settings
 import _self.bashNodeScript
 import _self.lib.playwright.prepareEnvironment
 import _self.lib.playwright.collectResults
+import _self.lib.playwright.artifactRules
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
@@ -220,11 +221,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 		name = "Playwright E2E Tests ($targetDevice)"
 		description = "Runs Gutenberg E2E tests as $targetDevice using Playwright"
 
-		artifactRules = """
-			logs.tgz => logs.tgz
-			screenshots => screenshots
-			trace => trace
-		""".trimIndent()
+		artifactRules = artifactRules()
 
 		vcs {
 			root(Settings.WpCalypso)
