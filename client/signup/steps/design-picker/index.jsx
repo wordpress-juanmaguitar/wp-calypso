@@ -1,6 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_PREMIUM_THEMES } from '@automattic/calypso-products';
 import DesignPicker, {
 	FeaturedPicksButtons,
+	PremiumBadge,
 	isBlankCanvasDesign,
 	getDesignUrl,
 	useCategorization,
@@ -21,6 +23,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { getRecommendedThemes as fetchRecommendedThemes } from 'calypso/state/themes/actions';
 import { getRecommendedThemes } from 'calypso/state/themes/selectors';
 import DIFMThemes from '../difm-design-picker/themes';
@@ -32,7 +35,18 @@ import './style.scss';
 const STATIC_PREVIEWS = [ 'bantry', 'sigler', 'miller', 'pollard', 'paxton', 'jones', 'baker' ];
 
 export default function DesignPickerStep( props ) {
-	const { flowName, stepName, isReskinned, queryParams, showDesignPickerCategories } = props;
+	const {
+		flowName,
+		stepName,
+		isReskinned,
+		queryParams,
+		showDesignPickerCategories,
+		siteId,
+	} = props;
+
+	const hasUnlimitedPremiumThemes = useSelector( ( state ) =>
+		hasFeature( state, siteId, FEATURE_PREMIUM_THEMES )
+	);
 
 	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
 	const useFeaturedPicksButtons =
@@ -54,7 +68,14 @@ export default function DesignPickerStep( props ) {
 		() => {
 			dispatch( saveSignupStep( { stepName: props.stepName } ) );
 			if ( ! themesToBeTransformed.length ) {
-				dispatch( fetchRecommendedThemes( 'auto-loading-homepage' ) );
+				dispatch(
+					fetchRecommendedThemes(
+						'auto-loading-homepage',
+						// We don't want to show premium themes if the user needs to purchase
+						// until the user can checkout the premium themes after design picker
+						hasUnlimitedPremiumThemes ? 'all' : 'free'
+					)
+				);
 			}
 		},
 		// Ignoring dependencies because we only want these actions to run on first mount
@@ -86,7 +107,7 @@ export default function DesignPickerStep( props ) {
 		// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
 		// component itself. The `/new` environment needs helpers for making authenticated requests to
 		// the theme API before we can do this.
-		const allThemes = themesToBeTransformed.map( ( { id, name, taxonomies } ) => {
+		const allThemes = themesToBeTransformed.map( ( { id, name, taxonomies, stylesheet } ) => {
 			// Designs use a "featured" term in the theme_picks taxonomy. For example: Blank Canvas
 			const isFeaturedPicks = !! taxonomies?.theme_picks?.find(
 				( { slug } ) => slug === 'featured'
@@ -97,7 +118,7 @@ export default function DesignPickerStep( props ) {
 				// Designs in order to appear prominently in theme galleries.
 				showFirst: isFeaturedPicks,
 				features: [],
-				is_premium: false,
+				is_premium: stylesheet && stylesheet.startsWith( 'premium/' ),
 				// Designs in order to appear at the below of the theme categories.
 				is_featured_picks: isFeaturedPicks,
 				slug: id,
@@ -180,6 +201,7 @@ export default function DesignPickerStep( props ) {
 					'design-picker-step__has-categories': showDesignPickerCategories,
 				} ) }
 				highResThumbnails
+				premiumBadge={ <PremiumBadge /> }
 				categorization={ showDesignPickerCategories ? categorization : undefined }
 				categoriesHeading={
 					<FormattedHeader
