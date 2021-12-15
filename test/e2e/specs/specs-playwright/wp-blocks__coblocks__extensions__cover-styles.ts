@@ -5,9 +5,9 @@
 import {
 	setupHooks,
 	BrowserHelper,
+	BrowserManager,
 	DataHelper,
 	MediaHelper,
-	LoginPage,
 	GutenbergEditorPage,
 	TestFile,
 	CoverBlock,
@@ -26,24 +26,22 @@ if ( BrowserHelper.targetCoBlocksEdge() ) {
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), () => {
 	let page: Page;
-	let loginPage: LoginPage;
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let imageFile: TestFile;
 	let coverBlock: CoverBlock;
 
-	setupHooks( ( args ) => {
+	setupHooks( async ( args ) => {
 		page = args.page;
+		gutenbergEditorPage = new GutenbergEditorPage( page );
+		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 	} );
 
-	beforeAll( async () => {
-		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		loginPage = new LoginPage( page );
-		gutenbergEditorPage = new GutenbergEditorPage( page );
+	it( `Log in as ${ testAccount }`, async () => {
+		await BrowserManager.authenticateTestAccount( page, testAccount );
 	} );
 
 	it( 'Go to the new post page', async () => {
 		await gutenbergEditorPage.visit( 'post' );
-		await loginPage.logInWithTestAccount( testAccount );
 	} );
 
 	it( 'Insert Cover block', async () => {

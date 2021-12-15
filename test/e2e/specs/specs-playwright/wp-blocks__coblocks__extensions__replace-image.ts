@@ -5,10 +5,10 @@
 import {
 	setupHooks,
 	BrowserHelper,
+	BrowserManager,
 	DataHelper,
 	MediaHelper,
 	ElementHelper,
-	LoginPage,
 	GutenbergEditorPage,
 	TestFile,
 	ImageBlock,
@@ -27,26 +27,24 @@ if ( BrowserHelper.targetCoBlocksEdge() ) {
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), () => {
 	let page: Page;
-	let loginPage: LoginPage;
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let imageBlock: ImageBlock;
 	let imageFile: TestFile;
 	let uploadedImageURL: string;
 	let newImageURL: string;
 
-	setupHooks( ( args ) => {
+	setupHooks( async ( args ) => {
 		page = args.page;
+		gutenbergEditorPage = new GutenbergEditorPage( page );
+		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 	} );
 
-	beforeAll( async () => {
-		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		loginPage = new LoginPage( page );
-		gutenbergEditorPage = new GutenbergEditorPage( page );
+	it( `Log in as ${ testAccount }`, async () => {
+		await BrowserManager.authenticateTestAccount( page, testAccount );
 	} );
 
 	it( 'Go to the new post page', async () => {
 		await gutenbergEditorPage.visit( 'post' );
-		await loginPage.logInWithTestAccount( testAccount );
 	} );
 
 	it( `Insert ${ ImageBlock.blockName } block and upload image`, async () => {

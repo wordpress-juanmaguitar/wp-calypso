@@ -5,8 +5,8 @@
 import {
 	setupHooks,
 	BrowserHelper,
+	BrowserManager,
 	DataHelper,
-	LoginPage,
 	GutenbergEditorPage,
 	PricingTableBlock,
 } from '@automattic/calypso-e2e';
@@ -23,22 +23,20 @@ if ( BrowserHelper.targetCoBlocksEdge() ) {
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ), () => {
 	let page: Page;
-	let loginPage: LoginPage;
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let pricingTableBlock: PricingTableBlock;
 
 	setupHooks( ( args ) => {
 		page = args.page;
+		gutenbergEditorPage = new GutenbergEditorPage( page );
 	} );
 
-	beforeAll( async () => {
-		loginPage = new LoginPage( page );
-		gutenbergEditorPage = new GutenbergEditorPage( page );
+	it( `Log in as ${ testAccount }`, async () => {
+		await BrowserManager.authenticateTestAccount( page, testAccount );
 	} );
 
 	it( 'Go to the new post page', async () => {
 		await gutenbergEditorPage.visit( 'post' );
-		await loginPage.logInWithTestAccount( testAccount );
 	} );
 
 	it( 'Insert Pricing Table block', async () => {
