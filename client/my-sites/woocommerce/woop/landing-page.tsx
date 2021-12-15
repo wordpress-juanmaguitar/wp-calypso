@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useRef } from '@wordpress/element';
@@ -21,13 +20,12 @@ const WarningsOrHoldsSection = styled.div`
 `;
 
 interface Props {
-	startSetup: () => void;
 	siteId: number;
 }
 
 const images = [ { src: Image01 }, { src: Image02 }, { src: Image03 }, { src: Image04 } ];
 
-const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId } ) => {
+const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const { __ } = useI18n();
 	const navigationItems = [ { label: 'WooCommerce', href: `/woocommerce-installation` } ];
 	const ctaRef = useRef( null );
@@ -35,11 +33,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 	const { hasBlockers, wpcomDomain, isDataReady } = useWooCommerceOnPlansEligibility( siteId );
 
 	function onCTAClickHandler() {
-		if ( isEnabled( 'woop' ) ) {
-			return page( `/start/woocommerce-install/?site=${ wpcomDomain }` );
-		}
-
-		return startSetup();
+		return page( `/start/woocommerce-install/?site=${ wpcomDomain }` );
 	}
 
 	function renderWarningNotice() {
