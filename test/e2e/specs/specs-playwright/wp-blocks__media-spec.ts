@@ -6,7 +6,6 @@
 import {
 	setupHooks,
 	DataHelper,
-	LoginPage,
 	MediaHelper,
 	NewPostFlow,
 	GutenbergEditorPage,
@@ -14,6 +13,7 @@ import {
 	AudioBlock,
 	FileBlock,
 	TestFile,
+	BrowserManager,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 import { TEST_IMAGE_PATH, TEST_AUDIO_PATH } from '../constants';
@@ -37,10 +37,8 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		};
 	} );
 
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.visit();
-		await loginPage.logInWithTestAccount( 'simpleSitePersonalPlanUser' );
+	it( 'Log in as "simpleSitePersonalPlanUser"', async function () {
+		await BrowserManager.authenticateTestAccount( page, 'simpleSitePersonalPlanUser' );
 	} );
 
 	it( 'Start new post', async function () {
