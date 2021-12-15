@@ -62,9 +62,12 @@ class RequireChunkCallbackPlugin {
 							return __webpack_require__.p;
 						};
 
-						var requireChunkCallback = new RequireChunkCallback();
-
-						window.__requireChunkCallback__ = requireChunkCallback;
+						// This module is _evaluated_ during Webpack compilation, so we need to guard
+						// against missing window.
+						if (typeof window !== "undefined" ) {
+							var requireChunkCallback = new RequireChunkCallback();
+							window.__requireChunkCallback__ = requireChunkCallback;
+						}
 					`,
 				] );
 			} );
