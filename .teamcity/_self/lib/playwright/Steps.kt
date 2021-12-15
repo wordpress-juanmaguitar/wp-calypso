@@ -1,6 +1,7 @@
 package _self.lib.playwright
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
+import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 
@@ -42,5 +43,33 @@ fun BuildSteps.prepareEnvironment(): ScriptBuildStep {
 		dockerPull = true
 		dockerImage = "%docker_image_e2e%"
 		dockerRunParameters = "-u %env.UID%"
+	}
+}
+
+/**
+ * Collects the resulting artifacts from a test run.
+ *
+ * This function will collect the following:
+ * 	- Screenshots
+ *	- Logs
+ *	- Trace files
+ */
+fun BuildSteps.collectResults(): ScriptBuildStep {
+	return script {
+		name = "Collect results"
+		executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+		scriptContent = """
+			set -x
+
+			mkdir -p screenshots
+			find test/e2e -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+			mkdir -p logs
+			find test/e2e -name '*ß.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+			mkdir -p trace
+			find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
+		""".trimIndent()
+		dockerImage = "%docker_image_e2e%"
 	}
 }

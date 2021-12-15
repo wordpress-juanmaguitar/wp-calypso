@@ -3,6 +3,7 @@ package _self.projects
 import Settings
 import _self.bashNodeScript
 import _self.lib.playwright.prepareEnvironment
+import _self.lib.playwright.collectResults
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
@@ -258,6 +259,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 
 		steps {
 			prepareEnvironment()
+
 			bashNodeScript {
 				name = "Run e2e tests ($targetDevice)"
 				scriptContent = """
@@ -287,22 +289,8 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=gutenberg
 				""".trimIndent()
 			}
-			bashNodeScript {
-				name = "Collect results"
-				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-				scriptContent = """
-					set -x
 
-					mkdir -p screenshots
-					find test/e2e -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-					mkdir -p logs
-					find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-					mkdir -p trace
-					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-				""".trimIndent()
-			}
+			collectResults()
 		}
 
 		features {
@@ -433,22 +421,7 @@ fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): Buil
 					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=coblocks
 				""".trimIndent()
 			}
-			bashNodeScript {
-				name = "Collect results"
-				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-				scriptContent = """
-					set -x
-
-					mkdir -p screenshots
-					find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-					mkdir -p logs
-					find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-					mkdir -p trace
-					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-				""".trimIndent()
-			}
+			collectResults()
 		}
 
 		features {
@@ -501,7 +474,6 @@ fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): Buil
 		triggers {}
 	}
 }
-
 
 fun jetpackBuildType(screenSize: String): BuildType {
 	return BuildType {
@@ -762,22 +734,7 @@ private object I18NTests : BuildType({
 				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=i18n
 			""".trimIndent()
 		}
-		bashNodeScript {
-			name = "Collect results"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-
-				mkdir -p screenshots
-				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-				mkdir -p logs
-				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-				mkdir -p trace
-				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-			""".trimIndent()
-		}
+		collectResults()
 	}
 
 	failureConditions {
@@ -891,23 +848,7 @@ object P2E2ETests : BuildType({
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
-		bashNodeScript {
-			name = "Collect results"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-
-				mkdir -p screenshots
-				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-				mkdir -p logs
-				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-				mkdir -p trace
-				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
+		collectResults()
 	}
 
 	features {
