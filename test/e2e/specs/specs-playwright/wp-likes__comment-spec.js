@@ -5,11 +5,11 @@
 import assert from 'assert';
 import {
 	DataHelper,
-	LoginPage,
 	CommentsComponent,
 	GutenbergEditorPage,
 	NewPostFlow,
 	setupHooks,
+	BrowserManager,
 } from '@automattic/calypso-e2e';
 
 const quote =
@@ -29,9 +29,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 		const comment = DataHelper.getRandomPhrase();
 
 		it( 'Log in', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.visit();
-			await loginPage.logInWithTestAccount( 'simpleSitePersonalPlanUser' );
+			await BrowserManager.authenticateTestAccount( page, 'simpleSitePersonalPlanUser' );
 		} );
 
 		it( 'Start new post', async function () {

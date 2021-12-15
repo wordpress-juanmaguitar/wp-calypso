@@ -5,10 +5,10 @@
 
 import {
 	DataHelper,
-	LoginPage,
 	NewPostFlow,
 	GutenbergEditorPage,
 	setupHooks,
+	BrowserManager,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -20,9 +20,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Navbar` ), function () {
 	} );
 
 	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.visit();
-		await loginPage.logInWithTestAccount( 'simpleSitePersonalPlanUser' );
+		await BrowserManager.authenticateTestAccount( page, 'simpleSitePersonalPlanUser' );
 	} );
 
 	it( 'Start new post', async function () {

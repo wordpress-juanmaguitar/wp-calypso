@@ -52,7 +52,7 @@ skipDescribeIf( isStagingOrProd )(
 		describe( 'Signup and select plan', function () {
 			it( 'Navigate to Signup page', async function () {
 				const loginPage = new LoginPage( page );
-				await loginPage.signup();
+				await loginPage.clickSignUp();
 			} );
 
 			it( 'Sign up as new user', async function () {

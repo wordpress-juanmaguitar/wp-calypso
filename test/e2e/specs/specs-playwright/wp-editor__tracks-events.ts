@@ -4,26 +4,23 @@
 
 import {
 	DataHelper,
-	LoginPage,
 	NewPostFlow,
 	GutenbergEditorPage,
 	setupHooks,
+	BrowserManager,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 import { getLatestEvent } from '../../lib/gutenberg/tracking/playwright-utils';
 
 describe( DataHelper.createSuiteTitle( `Tracks Events for Post Editor` ), function () {
 	let page: Page;
-	const mainUser = 'gutenbergSimpleSiteUser';
 
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
 	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.visit();
-		await loginPage.logInWithTestAccount( mainUser );
+		await BrowserManager.authenticateTestAccount( page, 'gutenbergSimpleSiteUser' );
 	} );
 
 	it( 'Start new post', async function () {

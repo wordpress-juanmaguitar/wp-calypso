@@ -3,10 +3,10 @@
  */
 
 import {
+	BrowserManager,
 	ChangeUILanguageFlow,
 	DataHelper,
 	GutenbergEditorPage,
-	LoginPage,
 	NewPostFlow,
 	setupHooks,
 	TestEnvironment,
@@ -226,10 +226,8 @@ describe( 'I18N: Editor', function () {
 		} );
 	} );
 
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.visit();
-		await loginPage.logInWithTestAccount( 'i18nUser' );
+	it( 'Log in as "i18nUser"', async function () {
+		await BrowserManager.authenticateTestAccount( page, 'i18nUser' );
 	} );
 
 	describe.each( locales )( `Locale: %s`, function ( locale ) {

@@ -3,10 +3,10 @@ import {
 	BlockFlow,
 	setupHooks,
 	GutenbergEditorPage,
-	LoginPage,
 	NewPostFlow,
 	EditorContext,
 	PublishedPostContext,
+	BrowserManager,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -29,9 +29,7 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 
 		describe( 'Editor set up', function () {
 			it( 'Log in and start a new post', async function () {
-				const loginPage = new LoginPage( page );
-				await loginPage.visit();
-				await loginPage.logInWithTestAccount( 'gutenbergSimpleSiteUser' );
+				await BrowserManager.authenticateTestAccount( page, 'gutenbergSimpleSiteUser' );
 
 				const newPostFlow = new NewPostFlow( page );
 				await newPostFlow.newPostFromNavbar();

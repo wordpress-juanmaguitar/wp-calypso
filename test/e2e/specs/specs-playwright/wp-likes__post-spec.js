@@ -34,9 +34,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		let publishedURL;
 
 		it( 'Log in', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.visit();
-			await loginPage.logInWithTestAccount( postingUser );
+			await BrowserManager.authenticateTestAccount( page, postingUser );
 		} );
 
 		it( 'Start new post', async function () {

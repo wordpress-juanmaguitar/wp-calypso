@@ -9,12 +9,12 @@ import {
 	DataHelper,
 	GutenbergEditorPage,
 	EditorSettingsSidebarComponent,
-	LoginPage,
 	NewPostFlow,
 	setupHooks,
 	PublishedPostPage,
 	ImageBlock,
 	skipItIf,
+	BrowserManager,
 } from '@automattic/calypso-e2e';
 import { Page, ElementHandle } from 'playwright';
 
@@ -41,9 +41,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		let blockHandle: ElementHandle;
 
 		it( 'Log in', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.visit();
-			await loginPage.logInWithTestAccount( testAccount );
+			await BrowserManager.authenticateTestAccount( page, testAccount );
 		} );
 
 		it( 'Start new post', async function () {
