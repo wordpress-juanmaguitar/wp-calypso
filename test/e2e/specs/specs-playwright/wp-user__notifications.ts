@@ -5,17 +5,16 @@
 import {
 	setupHooks,
 	DataHelper,
-	LoginPage,
 	PublishedPostsListPage,
 	CommentsComponent,
 	NavbarComponent,
 	NotificationsComponent,
+	BrowserManager,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	let page: Page;
-	let loginPage: LoginPage;
 	let publishedPostsListPage: PublishedPostsListPage;
 	let notificationsComponent: NotificationsComponent;
 
@@ -25,13 +24,11 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 	setupHooks( ( args ) => {
 		page = args.page;
-		loginPage = new LoginPage( page );
 	} );
 
 	describe( `Leave a comment as ${ commentingUser }`, function () {
 		it( `Log in as ${ commentingUser }`, async function () {
-			await loginPage.visit();
-			await loginPage.logInWithTestAccount( commentingUser );
+			await BrowserManager.authenticateTestAccount( page, commentingUser );
 		} );
 
 		it( 'Visit published site', async function () {
@@ -53,9 +50,7 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 	describe( `Trash comment as ${ notificationsUser }`, function () {
 		it( `Log in as ${ notificationsUser }`, async function () {
-			await loginPage.visit();
-			await loginPage.clickChangeAccount();
-			await loginPage.logInWithTestAccount( notificationsUser );
+			await BrowserManager.authenticateTestAccount( page, notificationsUser );
 		} );
 
 		it( 'Open notification using keyboard shortcut', async function () {
