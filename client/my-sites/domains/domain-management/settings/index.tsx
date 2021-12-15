@@ -10,7 +10,7 @@ import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/b
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
 import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/transfer';
-import ContactsPrivacyCard from 'calypso/my-sites/domains/domain-management/contacts-privacy/contacts-card';
+import ContactsPrivacyInfo from 'calypso/my-sites/domains/domain-management/contacts-privacy/contacts-privacy-info';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { requestWhois } from 'calypso/state/domains/management/actions';
 import { getWhoisData } from 'calypso/state/domains/management/selectors';
@@ -81,10 +81,11 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 				title="Contact information"
 				subtitle={ `${ contactInfoFullName }, ${ privacyProtectionLabel }` }
 			>
-				<ContactsPrivacyCard
+				<ContactsPrivacyInfo
+					domains={ props.domains }
 					selectedSite={ props.selectedSite }
 					selectedDomainName={ props.selectedDomainName }
-				></ContactsPrivacyCard>
+				></ContactsPrivacyInfo>
 			</Accordion>
 		);
 	};
