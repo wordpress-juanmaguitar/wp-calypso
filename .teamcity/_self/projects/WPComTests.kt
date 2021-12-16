@@ -2,9 +2,9 @@ package _self.projects
 
 import Settings
 import _self.bashNodeScript
-import _self.lib.playwright.prepareEnvironment
-import _self.lib.playwright.collectResults
-import _self.lib.playwright.artifactRules
+import _self.lib.e2e.prepareEnvironment
+import _self.lib.e2e.collectResults
+import _self.lib.e2e.artifactRules
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
