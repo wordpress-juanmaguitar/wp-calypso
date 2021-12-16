@@ -3,6 +3,8 @@ package _self.projects
 import Settings
 import _self.bashNodeScript
 import _self.lib.playwright.prepareEnvironment
+import _self.lib.playwright.collectResults
+import _self.lib.playwright.artifactRules
 import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
@@ -502,11 +504,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 		name = "E2E Tests ($targetDevice)"
 		description = "Runs Calypso e2e tests on $targetDevice size"
 
-		artifactRules = """
-			logs.tgz => logs.tgz
-			screenshots => screenshots
-			trace => trace
-		""".trimIndent()
+		artifactRules = artifactRules()
 
 		vcs {
 			root(Settings.WpCalypso)
@@ -563,23 +561,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
-			bashNodeScript {
-				name = "Collect results"
-				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-				scriptContent = """
-					set -x
-
-					mkdir -p screenshots
-					find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-					mkdir -p logs
-					find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-					mkdir -p trace
-					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-				""".trimIndent()
-				dockerImage = "%docker_image_e2e%"
-			}
+			collectResults()
 		}
 
 		features {
@@ -653,11 +635,7 @@ object PreReleaseE2ETests : BuildType({
 	description = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
 	maxRunningBuilds = 1
 
-	artifactRules = """
-		logs.tgz => logs.tgz
-		screenshots => screenshots
-		trace => trace
-	""".trimIndent()
+	artifactRules = artifactRules()
 
 	vcs {
 		root(Settings.WpCalypso)
@@ -693,23 +671,7 @@ object PreReleaseE2ETests : BuildType({
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
-		bashNodeScript {
-			name = "Collect results"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-
-				mkdir -p screenshots
-				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-				mkdir -p logs
-				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-				mkdir -p trace
-				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
+		collectResults()
 	}
 
 	features {
@@ -753,11 +715,7 @@ object QuarantinedE2ETests: BuildType( {
 	description = "E2E tests quarantined due to intermittent failures."
 	maxRunningBuilds = 1
 
-	artifactRules = """
-		logs.tgz => logs.tgz
-		screenshots => screenshots
-		trace => trace
-	""".trimIndent()
+	artifactRules = artifactRules()
 
 	vcs {
 		root(Settings.WpCalypso)
@@ -793,23 +751,7 @@ object QuarantinedE2ETests: BuildType( {
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
-		bashNodeScript {
-			name = "Collect results"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-
-				mkdir -p screenshots
-				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-				mkdir -p logs
-				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-				mkdir -p trace
-				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
+		collectResults()
 	}
 
 	features {

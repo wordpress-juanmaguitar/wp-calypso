@@ -360,11 +360,7 @@ fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): Buil
 		description = "Runs CoBlocks E2E tests as $targetDevice using Playwright"
 
 
-		artifactRules = """
-			reports => reports
-			logs.tgz => logs.tgz
-			screenshots => screenshots
-		""".trimIndent()
+		artifactRules = artifactRules()
 
 		vcs {
 			root(Settings.WpCalypso)
@@ -675,11 +671,7 @@ private object I18NTests : BuildType({
 	name = "I18N Tests"
 	description = "Runs tests related to i18n"
 
-	artifactRules = """
-		logs.tgz => logs.tgz
-		screenshots => screenshots
-		trace => trace
-	""".trimIndent()
+	artifactRules = artifactRules()
 
 	vcs {
 		root(Settings.WpCalypso)
@@ -788,11 +780,7 @@ object P2E2ETests : BuildType({
 	name = "P2 E2E Tests"
 	description = "Runs end-to-end tests against P2."
 
-	artifactRules = """
-		logs.tgz => logs.tgz
-		screenshots => screenshots
-		trace => trace
-	""".trimIndent()
+	artifactRules = artifactRules()
 
 	vcs {
 		root(Settings.WpCalypso)
