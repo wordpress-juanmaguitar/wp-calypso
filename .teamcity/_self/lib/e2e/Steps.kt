@@ -73,3 +73,61 @@ fun BuildSteps.collectResults(): ScriptBuildStep {
 		dockerImage = "%docker_image_e2e%"
 	}
 }
+
+/**
+ *
+ */
+fun BuildSteps.runTests(
+	stepName: String = "",
+	dockerBuildNumber: String = "",
+	testGroup: String = "",
+	envVars: Map<String, String>
+): ScriptBuildStep {
+	return script {
+		name = stepName
+		dockerImage = "%docker_image_e2e%"
+
+		val scriptContentBuilder = StringBuilder()
+
+		scriptContentBuilder.append(
+			"""
+			# Configure bash shell.
+			shopt -s globstar
+			set -x
+
+			# Set up artifact directory.
+			cd test/e2e
+			mkdir temp
+
+			# Decrypt config
+			openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+			"""
+		)
+
+		if (!dockerBuildNumber.isBlank()) {
+			scriptContentBuilder.append(
+				"""
+				chmod +x ./bin/get-calypso-live-url.sh
+				URL=${'$'}(./bin/get-calypso-live-url.sh $dockerBuildNumber)
+				if [[ ${'$'}? -ne 0 ]]; then
+					// Command failed. URL contains stderr
+					echo ${'$'}URL
+					exit 1
+				fi
+				"""
+			)
+		}
+
+		for ((key, value) in envVars) {
+			scriptContentBuilder.append( "export $key=$value\n")
+		}
+
+		scriptContentBuilder.append(
+			"""
+			xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=$testGroup
+			"""
+		)
+
+		scriptContent = scriptContentBuilder.toString().trimIndent()
+	}
+}
