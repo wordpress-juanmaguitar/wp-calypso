@@ -172,7 +172,7 @@ class Signup extends Component {
 		// Prevent duplicate sites, check pau2Xa-1Io-p2#comment-6759.
 		// The DIFM Lite flow deals with both new and existing sites, so
 		// we'll skip this.
-		if ( ! isAddNewSiteFlow && ! isDIFMLiteFlow && this.isReEnteringSignupViaBrowserBack() ) {
+		if ( ! isDIFMLiteFlow && ! isAddNewSiteFlow && this.isReEnteringSignupViaBrowserBack() ) {
 			this.enableManageSiteFlow = true;
 			providedDependencies = { siteSlug: getSignupCompleteSlug(), isManageSiteFlow: true };
 		}
