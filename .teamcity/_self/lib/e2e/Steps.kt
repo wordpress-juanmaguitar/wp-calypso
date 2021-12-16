@@ -59,6 +59,13 @@ fun BuildSteps.collectResults(): ScriptBuildStep {
 		name = "Collect results"
 		executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 		scriptContent = """
+			#!/bin/bash
+			# Update node
+			. "${'$'}NVM_DIR/nvm.sh" --no-use
+			nvm install
+			set -o errexit
+			set -o nounset
+			set -o pipefail
 			set -x
 
 			mkdir -p screenshots
@@ -71,6 +78,8 @@ fun BuildSteps.collectResults(): ScriptBuildStep {
 			find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
 		""".trimIndent()
 		dockerImage = "%docker_image_e2e%"
+		dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+		dockerRunParameters = "-u %env.UID%"
 	}
 }
 
