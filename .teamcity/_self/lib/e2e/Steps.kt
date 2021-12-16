@@ -1,7 +1,5 @@
 package _self.lib.e2e
 
-import _self.bashNodeScript
-
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
@@ -74,7 +72,7 @@ fun BuildSteps.collectResults(): ScriptBuildStep {
 			find test/e2e -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
 
 			mkdir -p logs
-			find test/e2e -name '*ß.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+			find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
 
 			mkdir -p trace
 			find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
@@ -95,7 +93,7 @@ fun BuildSteps.runTests(
 	testGroup: String = "",
 	envVars: Map<String, String>
 ): ScriptBuildStep {
-	return bashNodeScript {
+	return script {
 		name = stepName
 		dockerImage = "%docker_image_e2e%"
 
@@ -115,10 +113,6 @@ fun BuildSteps.runTests(
 			# Configure bash shell.
 			shopt -s globstar
 
-			# Set up artifact directory.
-			cd test/e2e
-			mkdir temp
-
 			""".trimIndent()
 		)
 
@@ -136,6 +130,14 @@ fun BuildSteps.runTests(
 				""".trimIndent()
 			)
 		}
+
+		scriptContentBuilder.appendLine(
+			"""
+			cd test/e2e
+			mkdir temp
+
+			"""
+		)
 
 		scriptContentBuilder.appendLine(
 			"""
@@ -164,10 +166,10 @@ fun BuildSteps.runTests(
 		)
 
 		scriptContent = scriptContentBuilder.toString().trimIndent()
-		println(scriptContent)
-		// dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-		// dockerPull = true
-		// dockerImage = "%docker_image_e2e%"
-		// dockerRunParameters = "-u %env.UID%"
+
+		dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+		dockerPull = true
+		dockerImage = "%docker_image_e2e%"
+		dockerRunParameters = "-u %env.UID%"
 	}
 }
