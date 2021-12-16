@@ -44,9 +44,11 @@ export default function DesignPickerStep( props ) {
 		siteId,
 	} = props;
 
-	const hasUnlimitedPremiumThemes = useSelector( ( state ) =>
-		hasFeature( state, siteId, FEATURE_PREMIUM_THEMES )
-	);
+	const { userLoggedIn, apiThemes, hasUnlimitedPremiumThemes } = useSelector( ( state ) => ( {
+		userLoggedIn: isUserLoggedIn( state ),
+		apiThemes: getRecommendedThemes( state, 'auto-loading-homepage' ),
+		hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_PREMIUM_THEMES ),
+	} ) );
 
 	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
 	const useFeaturedPicksButtons =
@@ -57,11 +59,6 @@ export default function DesignPickerStep( props ) {
 
 	const [ selectedDesign, setSelectedDesign ] = useState( null );
 	const scrollTop = useRef( 0 );
-
-	const apiThemes = useSelector( ( state ) =>
-		getRecommendedThemes( state, 'auto-loading-homepage' )
-	);
-
 	const themesToBeTransformed = props.useDIFMThemes ? DIFMThemes : apiThemes;
 
 	useEffect(
@@ -99,8 +96,6 @@ export default function DesignPickerStep( props ) {
 			timeoutID && window.clearTimeout( timeoutID );
 		};
 	}, [ props.stepSectionName ] );
-
-	const userLoggedIn = useSelector( isUserLoggedIn );
 
 	const { designs, featuredPicksDesigns } = useMemo( () => {
 		// TODO fetching and filtering code should be pulled to a shared place that's usable by both
