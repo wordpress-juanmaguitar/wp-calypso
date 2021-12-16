@@ -5,6 +5,7 @@ import _self.bashNodeScript
 import _self.lib.e2e.prepareEnvironment
 import _self.lib.e2e.collectResults
 import _self.lib.e2e.artifactRules
+import _self.lib.e2e.wpCalypsoVCS
 import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
@@ -506,10 +507,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 
 		artifactRules = artifactRules()
 
-		vcs {
-			root(Settings.WpCalypso)
-			cleanCheckout = true
-		}
+		wpCalypsoVCS()
 
 		params {
 			checkbox(
@@ -637,10 +635,7 @@ object PreReleaseE2ETests : BuildType({
 
 	artifactRules = artifactRules()
 
-	vcs {
-		root(Settings.WpCalypso)
-		cleanCheckout = true
-	}
+	wpCalypsoVCS()
 
 	steps {
 		prepareEnvironment()
@@ -717,10 +712,7 @@ object QuarantinedE2ETests: BuildType( {
 
 	artifactRules = artifactRules()
 
-	vcs {
-		root(Settings.WpCalypso)
-		cleanCheckout = true
-	}
+	wpCalypsoVCS()
 
 	steps {
 		prepareEnvironment()

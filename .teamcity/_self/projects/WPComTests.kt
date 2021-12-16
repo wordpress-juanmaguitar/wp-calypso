@@ -5,6 +5,7 @@ import _self.bashNodeScript
 import _self.lib.e2e.prepareEnvironment
 import _self.lib.e2e.collectResults
 import _self.lib.e2e.artifactRules
+import _self.lib.e2e.wpCalypsoVCS
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
@@ -60,10 +61,7 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 			screenshots => screenshots
 		""".trimIndent()
 
-		vcs {
-			root(Settings.WpCalypso)
-			cleanCheckout = true
-		}
+		wpCalypsoVCS()
 
 		params {
 			text(
@@ -223,10 +221,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 
 		artifactRules = artifactRules()
 
-		vcs {
-			root(Settings.WpCalypso)
-			cleanCheckout = true
-		}
+		wpCalypsoVCS()
 
 		params {
 			text(
@@ -359,13 +354,9 @@ fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): Buil
 		name = "Playwright CoBlocks E2E Tests ($targetDevice)"
 		description = "Runs CoBlocks E2E tests as $targetDevice using Playwright"
 
-
 		artifactRules = artifactRules()
 
-		vcs {
-			root(Settings.WpCalypso)
-			cleanCheckout = true
-		}
+		wpCalypsoVCS()
 
 		params {
 			text(
@@ -673,10 +664,7 @@ private object I18NTests : BuildType({
 
 	artifactRules = artifactRules()
 
-	vcs {
-		root(Settings.WpCalypso)
-		cleanCheckout = true
-	}
+	wpCalypsoVCS()
 
 	params {
 		text(
@@ -782,10 +770,7 @@ object P2E2ETests : BuildType({
 
 	artifactRules = artifactRules()
 
-	vcs {
-		root(Settings.WpCalypso)
-		cleanCheckout = true
-	}
+	wpCalypsoVCS()
 
 	params {
 		checkbox(
@@ -887,14 +872,5 @@ object P2E2ETests : BuildType({
 		executionTimeoutMin = 10
 		// Do not fail on non-zero exit code to permit passing builds with muted tests.
 		nonZeroExitCode = false
-		failOnMetricChange {
-			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-			threshold = 50
-			units = BuildFailureOnMetric.MetricUnit.PERCENTS
-			comparison = BuildFailureOnMetric.MetricComparison.LESS
-			compareTo = build {
-				buildRule = lastSuccessful()
-			}
-		}
 	}
 })
