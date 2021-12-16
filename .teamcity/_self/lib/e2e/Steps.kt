@@ -1,5 +1,7 @@
 package _self.lib.e2e
 
+import _self.bashNodeScript
+
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
@@ -93,7 +95,7 @@ fun BuildSteps.runTests(
 	testGroup: String = "",
 	envVars: Map<String, String>
 ): ScriptBuildStep {
-	return script {
+	return bashNodeScript {
 		name = stepName
 		dockerImage = "%docker_image_e2e%"
 
@@ -161,12 +163,11 @@ fun BuildSteps.runTests(
 			""".trimIndent()
 		)
 
-		println(scriptContentBuilder.toString())
-
 		scriptContent = scriptContentBuilder.toString().trimIndent()
-		dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-		dockerPull = true
-		dockerImage = "%docker_image_e2e%"
-		dockerRunParameters = "-u %env.UID%"
+		println(scriptContent)
+		// dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+		// dockerPull = true
+		// dockerImage = "%docker_image_e2e%"
+		// dockerRunParameters = "-u %env.UID%"
 	}
 }
