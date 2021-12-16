@@ -77,8 +77,9 @@ fun BuildSteps.collectResults(): ScriptBuildStep {
 			mkdir -p trace
 			find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
 		""".trimIndent()
-		dockerImage = "%docker_image_e2e%"
 		dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+		dockerPull = true
+		dockerImage = "%docker_image_e2e%"
 		dockerRunParameters = "-u %env.UID%"
 	}
 }
@@ -98,22 +99,29 @@ fun BuildSteps.runTests(
 
 		val scriptContentBuilder = StringBuilder()
 
-		scriptContentBuilder.append(
+		scriptContentBuilder.appendLine(
 			"""
+			#!/bin/bash
+			# Update node
+			. "${'$'}NVM_DIR/nvm.sh" --no-use
+			nvm install
+			set -o errexit
+			set -o nounset
+			set -o pipefail
+			set -x
+
 			# Configure bash shell.
 			shopt -s globstar
-			set -x
 
 			# Set up artifact directory.
 			cd test/e2e
 			mkdir temp
-			"""
+
+			""".trimIndent()
 		)
 
-		println(scriptContentBuilder.toString())
-
 		if (!dockerBuildNumber.isBlank()) {
-			scriptContentBuilder.append(
+			scriptContentBuilder.appendLine(
 				"""
 				chmod +x ./bin/get-calypso-live-url.sh
 				URL=${'$'}(./bin/get-calypso-live-url.sh $dockerBuildNumber)
@@ -122,41 +130,43 @@ fun BuildSteps.runTests(
 					echo ${'$'}URL
 					exit 1
 				fi
-				"""
+
+				""".trimIndent()
 			)
 		}
 
-		println(scriptContentBuilder.toString())
-
-		scriptContentBuilder.append(
+		scriptContentBuilder.appendLine(
 			"""
 			export NODE_CONFIG_ENV=test
 			export PLAYWRIGHT_BROWSERS_PATH=0
 			export TEAMCITY_VERSION=2021
 			export DEBUG=pw:api
 			export HEADLESS=false
-			"""
+			""".trimIndent()
 		)
 
-		println(scriptContentBuilder.toString())
-
 		for ((key, value) in envVars) {
-			scriptContentBuilder.append( "export $key=$value\n")
+			scriptContentBuilder.appendln( "export $key=$value\n".trimIndent())
 		}
 
-		println(scriptContentBuilder.toString())
-
-		scriptContentBuilder.append(
+		scriptContentBuilder.appendLine(
 			"""
+
 			# Decrypt config
 			openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
-			xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=$testGroup
-			"""
+			# xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=$testGroup
+
+			xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% specs/specs-playwright/wp-reader__view-spec.ts
+			""".trimIndent()
 		)
 
 		println(scriptContentBuilder.toString())
 
 		scriptContent = scriptContentBuilder.toString().trimIndent()
+		dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+		dockerPull = true
+		dockerImage = "%docker_image_e2e%"
+		dockerRunParameters = "-u %env.UID%"
 	}
 }
