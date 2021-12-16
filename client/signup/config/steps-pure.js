@@ -746,6 +746,7 @@ export function generateSteps( {
 			},
 			providesDependencies: [ 'siteId', 'siteSlug' ],
 			optionalDependencies: [ 'siteId', 'siteSlug' ],
+			fulfilledStepCallback: isNewOrExistingSiteFulfilled,
 		},
 
 		'difm-design-setup-site': {

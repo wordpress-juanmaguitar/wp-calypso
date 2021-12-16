@@ -272,7 +272,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		const newOrExistingSiteChoice = get(
 			getSignupDependencyStore( state ),
 			'newOrExistingSiteChoice',
-			undefined
+			'new-site'
 		);
 		// Do not create a new site if the user chose that they want DIFM Lite on an existing site
 		if ( 'existing-site' === newOrExistingSiteChoice ) {
@@ -369,7 +369,7 @@ export function setDesignIfNewSite( callback, dependencies, step, reduxStore ) {
 	const newOrExistingSiteChoice = get(
 		getSignupDependencyStore( state ),
 		'newOrExistingSiteChoice',
-		null
+		'new-site'
 	);
 	if ( 'new-site' === newOrExistingSiteChoice ) {
 		setDesignOnSite( callback, dependencies );
@@ -1042,8 +1042,19 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
  * Skip the step if the user does not have any existing sites
  */
 export function isNewOrExistingSiteFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { existingSiteCount } = nextProps;
+	const { existingSiteCount, submitSignupStep } = nextProps;
 	if ( ! existingSiteCount || 0 === existingSiteCount ) {
+		const stepProvidesDependency = steps[ stepName ].providesDependencies.includes(
+			'newOrExistingSiteChoice'
+		);
+		let dependency = undefined;
+		if ( stepProvidesDependency ) {
+			dependency = {
+				newOrExistingSiteChoice: 'new-site',
+			};
+		}
+		submitSignupStep( { stepName, wasSkipped: true }, dependency );
+		recordExcludeStepEvent( stepName );
 		flows.excludeStep( stepName );
 	}
 }
