@@ -4,7 +4,8 @@ import Accordion from 'calypso/components/domains/accordion';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { getSelectedDomain } from 'calypso/lib/domains';
+import { getSelectedDomain, isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
@@ -73,6 +74,13 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 
 		if ( ! domain ) return placeholderAccordion;
 
+		if (
+			domain.type !== domainTypes.REGISTERED ||
+			( ! isDomainUpdateable( domain ) && ! isDomainInGracePeriod( domain ) )
+		) {
+			return null;
+		}
+
 		const { privateDomain } = domain;
 		const contactInformation = findRegistrantWhois( whoisData );
 
@@ -92,7 +100,7 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 				subtitle={ `${ contactInfoFullName }, ${ privacyProtectionLabel }` }
 			>
 				<ContactsPrivacyInfo
-					domains={ props.domains }
+					domains={ props.domains! }
 					selectedSite={ props.selectedSite }
 					selectedDomainName={ props.selectedDomainName }
 				></ContactsPrivacyInfo>
