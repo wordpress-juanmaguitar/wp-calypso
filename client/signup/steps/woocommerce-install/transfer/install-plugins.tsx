@@ -27,13 +27,14 @@ export default function InstallPlugins( {
 		getAtomicSoftwareStatus( state, siteId, 'woo-on-plans' )
 	);
 
-	// used to implement a timeout threshold for the install to complete.
+	// Used to implement a timeout threshold for the install to complete.
 	const [ isTimeout, setIsTimeout ] = useState( false );
 
 	const softwareApplied = softwareStatus?.applied;
+	const softwareError = softwareStatus?.error;
 	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
 
-	const installFailed = isTimeout;
+	const installFailed = isTimeout || softwareError;
 
 	const [ progress, setProgress ] = useState( 0.6 );
 	// Install Woo on plans software set
@@ -50,8 +51,21 @@ export default function InstallPlugins( {
 		dispatch( requestAtomicSoftwareInstall( siteId, 'woo-on-plans' ) );
 	}, [ dispatch, siteId, installFailed ] );
 
+	// Call onFailure callback when install fails.
+	useEffect( () => {
+		if ( ! softwareError ) {
+			return;
+		}
+
+		onFailure();
+	}, [ softwareError, onFailure ] );
+
 	// Timeout threshold for the install to complete.
 	useEffect( () => {
+		if ( installFailed ) {
+			return;
+		}
+
 		const timeId = setTimeout( () => {
 			setIsTimeout( true );
 			onFailure();
@@ -60,7 +74,7 @@ export default function InstallPlugins( {
 		return () => {
 			window?.clearTimeout( timeId );
 		};
-	}, [ onFailure ] );
+	}, [ onFailure, installFailed ] );
 
 	// Poll for status of installation
 	useInterval(
