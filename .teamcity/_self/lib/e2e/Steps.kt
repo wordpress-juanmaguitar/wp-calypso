@@ -98,11 +98,10 @@ fun BuildSteps.runTests(
 			# Set up artifact directory.
 			cd test/e2e
 			mkdir temp
-
-			# Decrypt config
-			openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 			"""
 		)
+
+		println(scriptContentBuilder.toString())
 
 		if (!dockerBuildNumber.isBlank()) {
 			scriptContentBuilder.append(
@@ -118,15 +117,36 @@ fun BuildSteps.runTests(
 			)
 		}
 
+		println(scriptContentBuilder.toString())
+
+		scriptContentBuilder.append(
+			"""
+			export NODE_CONFIG_ENV=test
+			export PLAYWRIGHT_BROWSERS_PATH=0
+			export TEAMCITY_VERSION=2021
+			export DEBUG=pw:api
+			export HEADLESS=false
+			"""
+		)
+
+		println(scriptContentBuilder.toString())
+
 		for ((key, value) in envVars) {
 			scriptContentBuilder.append( "export $key=$value\n")
 		}
 
+		println(scriptContentBuilder.toString())
+
 		scriptContentBuilder.append(
 			"""
+			# Decrypt config
+			openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
 			xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=$testGroup
 			"""
 		)
+
+		println(scriptContentBuilder.toString())
 
 		scriptContent = scriptContentBuilder.toString().trimIndent()
 	}
