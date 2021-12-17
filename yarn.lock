@@ -12270,7 +12270,7 @@ __metadata:
     valid-url: ^1.0.9
     webpack: ^5.65.0
     webpack-bundle-analyzer: ^4.5.0
-    webpack-dev-middleware: ^5.2.2
+    webpack-dev-middleware: ^5.3.0
     webpack-hot-middleware: ^2.25.1
     webpack-node-externals: ^3.0.0
     wpcom: "workspace:^"
@@ -37209,9 +37209,9 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"webpack-dev-middleware@npm:^5.2.1, webpack-dev-middleware@npm:^5.2.2":
-  version: 5.2.2
-  resolution: "webpack-dev-middleware@npm:5.2.2"
+"webpack-dev-middleware@npm:^5.2.1, webpack-dev-middleware@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "webpack-dev-middleware@npm:5.3.0"
   dependencies:
     colorette: ^2.0.10
     memfs: ^3.2.2
@@ -37220,7 +37220,7 @@ testarmada-magellan@11.0.10:
     schema-utils: ^4.0.0
   peerDependencies:
     webpack: ^4.0.0 || ^5.0.0
-  checksum: 631695d4efd4cf8e9cdbadf87751b5b0e5eb418e799c2f6a0a511904fa3764e7309e9ab33e3b7aaf2a59136f19c69730b7c2af169e719b223c64134280f13f78
+  checksum: a486502bdc6215e1cf37080af2d3c473d2589c24473c163dcb04989bf73eb179a0085090c7ad12c85f25914d0bd14ddbd72e56e38c82ece3e4756ae87dbe56ab
   languageName: node
   linkType: hard
 
@@ -37889,7 +37889,7 @@ testarmada-magellan@11.0.10:
     webpack: ^5.65.0
     webpack-bundle-analyzer: ^4.5.0
     webpack-cli: ^4.9.1
-    webpack-dev-middleware: ^5.2.2
+    webpack-dev-middleware: ^5.3.0
     whybundled: ^2.0.0
     wpcom: "workspace:^"
     yargs: ^17.0.1
