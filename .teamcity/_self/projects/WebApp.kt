@@ -532,7 +532,6 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					"LIVEBRANCHES" to "true",
 					"TARGET_DEVICE" to "$targetDevice",
 					"LOCALE" to "en",
-					"NODE_CONFIG" to "{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}",
 				)
 			)
 
@@ -616,33 +615,38 @@ object PreReleaseE2ETests : BuildType({
 
 	steps {
 		prepareEnvironment()
-		bashNodeScript {
-			name = "Run pre-release e2e tests"
-			scriptContent = """
-				shopt -s globstar
-				set -x
 
-				cd test/e2e
-				mkdir temp
+		runTests(
+			stepName = "Run pre-release e2e tests",
+			testGroup = "calypso-release",
+			envVars = mapOf(
+				"TARGET_DEVICE" to "desktop",
+				"LOCALE" to "en",
+				"URL" to "https://wpcalypso.wordpress.com"
+			)
+		)
 
-				export URL="https://wpcalypso.wordpress.com"
+		// bashNodeScript {
+		// 	name = "Run pre-release e2e tests"
+		// 	scriptContent = """
+		// 		shopt -s globstar
+		// 		set -x
 
-				export NODE_CONFIG_ENV=test
-				export PLAYWRIGHT_BROWSERS_PATH=0
-				export TEAMCITY_VERSION=2021
-				export TARGET_DEVICE=desktop
-				export LOCALE=en
-				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export DEBUG=pw:api
-				export HEADLESS=false
+		// 		cd test/e2e
+		// 		mkdir temp
 
-				# Decrypt config
-				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+		// 		export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+		// 		export DEBUG=pw:api
+		// 		export HEADLESS=false
 
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
+		// 		# Decrypt config
+		// 		openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+		// 		xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
+		// 	""".trimIndent()
+		// 	dockerImage = "%docker_image_e2e%"
+		// }
+
 		collectResults()
 	}
 

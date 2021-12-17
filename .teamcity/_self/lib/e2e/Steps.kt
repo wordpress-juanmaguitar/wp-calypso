@@ -139,8 +139,13 @@ fun BuildSteps.runTests(
 			"""
 		)
 
+		for ((key, value) in envVars) {
+			scriptContentBuilder.appendln( "export $key=$value\n".trimIndent())
+		}
+
 		scriptContentBuilder.appendLine(
 			"""
+			export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 			export NODE_CONFIG_ENV=test
 			export PLAYWRIGHT_BROWSERS_PATH=0
 			export TEAMCITY_VERSION=2021
@@ -148,10 +153,6 @@ fun BuildSteps.runTests(
 			export HEADLESS=false
 			""".trimIndent()
 		)
-
-		for ((key, value) in envVars) {
-			scriptContentBuilder.appendln( "export $key=$value\n".trimIndent())
-		}
 
 		scriptContentBuilder.appendLine(
 			"""
