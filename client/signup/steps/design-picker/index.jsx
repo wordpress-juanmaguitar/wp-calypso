@@ -43,11 +43,11 @@ export default function DesignPickerStep( props ) {
 		sitePlanSlug,
 	} = props;
 
-	const { userLoggedIn, apiThemes, isPremiumThemesAvailable } = useSelector( ( state ) => ( {
-		userLoggedIn: isUserLoggedIn( state ),
-		apiThemes: getRecommendedThemes( state, 'auto-loading-homepage' ),
-		isPremiumThemesAvailable: planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
-	} ) );
+	const [ userLoggedIn, apiThemes, isPremiumThemesAvailable ] = useSelector( ( state ) => [
+		isUserLoggedIn( state ),
+		getRecommendedThemes( state, 'auto-loading-homepage' ),
+		planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
+	] );
 
 	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
 	const useFeaturedPicksButtons =
